@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    background-color: #242424;
+    color: white;
+}
+
+#app {
+    height: 100%;
+}
+
+input,
+select {
+    @apply bg-black text-white px-3 py-1 rounded-lg;
+}
