@@ -3,10 +3,9 @@
 @tailwind utilities;
 
 body {
+    @apply bg-gray-200 overflow-y-auto;
     height: 100vh;
-    overflow: hidden;
-    background-color: #242424;
-    color: white;
+    color: black;
 }
 
 #app {

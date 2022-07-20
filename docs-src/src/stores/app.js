@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import defaultImage from '@/assets/default.gif';
+import defaultImage from '@/assets/default.png';
 import { getDefaultOptions } from '../../../src/index.ts';
 
 

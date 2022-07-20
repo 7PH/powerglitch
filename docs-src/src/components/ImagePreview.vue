@@ -11,7 +11,7 @@ const rebuild = () => {
     if (! container.value) {
         return;
     }
-    PowerGlitch.install(container.value, appStore.powerGlitchOptions);
+    PowerGlitch.glitch(container.value, appStore.powerGlitchOptions);
 };
 
 // Rebuild when mounted or options changed

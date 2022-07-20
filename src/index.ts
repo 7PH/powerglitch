@@ -15,7 +15,7 @@ export type PowerGlitchOptions = {
         amplitudeX: number,
         amplitudeY: number,
     },
-    slices: false | {
+    slice: false | {
         count: number,
         velocity: number,
         minHeight: number,
@@ -43,19 +43,19 @@ export const getDefaultOptions = (): Partial<PowerGlitchOptions> => ({
         iterations: Infinity,
     },
     glitchTimeSpan: {
-        start: 0.3,
+        start: 0.5,
         end: 0.7,
     },
     shake: {
         velocity: 20,
-        amplitudeX: 0.5,
-        amplitudeY: 0.5,
+        amplitudeX: 0.4,
+        amplitudeY: 0.4,
     },
-    slices: {
-        count: 6,
-        velocity: 20,
-        minHeight: 0.01,
-        maxHeight: 0.05,
+    slice: {
+        count: 10,
+        velocity: 25,
+        minHeight: 0.02,
+        maxHeight: 0.15,
         hueRotate: true,
     },
 });
@@ -129,18 +129,18 @@ const getDefaultTimingCss = (stepCount: number) => {
  * Generate one layer
  */
 const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
-    if (! options.slices) {
-        throw new Error('Slices are not enabled');
+    if (! options.slice) {
+        throw new Error('Slice are not enabled');
     }
-    const stepCount = Math.floor(options.slices.velocity * options.timing.duration / 1000) + 1;
+    const stepCount = Math.floor(options.slice.velocity * options.timing.duration / 1000) + 1;
     const steps = [];
     for (let index = 0; index < stepCount; ++ index) {
-        const rectangle = getRandomRectangle({ minHeight: options.slices.minHeight, maxHeight: options.slices.maxHeight, minWidth: 1, maxWidth: 1 });
+        const rectangle = getRandomRectangle({ minHeight: options.slice.minHeight, maxHeight: options.slice.maxHeight, minWidth: 1, maxWidth: 1 });
         const translateX = getGlitchRandom(options, index / stepCount) * 30;
         const styles: {[cssPropertyName: string]: string} = {};
         styles.transform = `translate3d(${translateX}%, 0, 0)`;
         styles.clipPath = getRectanglePolygonCss(rectangle);
-        if (options.slices.hueRotate) {
+        if (options.slice.hueRotate) {
             styles.filter = `hue-rotate(${Math.floor(getGlitchRandom(options, index / stepCount) * 360)}deg)`;
         }
         steps.push(styles);
@@ -179,8 +179,8 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
 
     layers.push(generateBaseLayer(options));
 
-    if (options.slices) {
-        for (let i = 0; i < options.slices.count; ++ i) {
+    if (options.slice) {
+        for (let i = 0; i < options.slice.count; ++ i) {
             layers.push(generateGlitchSliceLayer(options));
         }
     }
@@ -191,7 +191,7 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
 /**
  * 
  */
-const install = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOptions) => {
+const glitch = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOptions) => {
     // Fix options with defaults
     options = { ...getDefaultOptions(), ...options };
     // Find selector or element
@@ -231,5 +231,5 @@ const install = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOpti
 };
 
 export const PowerGlitch = {
-    install,
+    glitch,
 };

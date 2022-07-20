@@ -1,20 +1,35 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAppStore } from '@/stores/app';
-import { getDefaultOptions } from '../../../src/index.ts';
+import { PowerGlitch, getDefaultOptions } from '../../../src/index.ts';
+import logo from '@/assets/logo.png';
 import ToggleGroupOption from '@/components/ToggleGroupOption.vue';
 import StringOption from '@/components/StringOption.vue';
 import BooleanOption from '@/components/BooleanOption.vue';
 import NumberOption from '@/components/NumberOption.vue';
 
 const appStore = useAppStore();
+
+const logoGlitch = ref(null);
+onMounted(() => {
+    PowerGlitch.glitch(
+        logoGlitch.value,
+        {
+            ...getDefaultOptions(),
+            imageUrl: logo,
+        }
+    )
+});
+
 </script>
 
 <template>
     <div class="px-4">
 
         <div class="font-bold text-xl mb-4 flex">
-            <div class="grow">PowerGlitch</div>
+            <div class="grow flex gap-2">
+                <div ref="logoGlitch" style="width: 30px; height: 30px;"></div> PowerGlitch
+            </div>
             <div>
                 <a
                     title="Github"
@@ -43,21 +58,22 @@ const appStore = useAppStore();
             class="mt-1"
             v-model="appStore.powerGlitchOptions.timing.duration"
             :title="'Loop duration (ms)'"
-            :min="100"
+            :min="500"
             :max="10000"
             :step="100"
         />
         <ToggleGroupOption
             class="mt-1"
-            v-model="appStore.powerGlitchOptions.timing.iterations"
-            :title="'Loop'"
+            :modelValue="appStore.powerGlitchOptions.timing.iterations === Infinity"
+            @update:modelValue="iterations => appStore.powerGlitchOptions.timing.iterations = iterations"
+            :title="'Repeat indefinitely'"
             :getDefaultValue="v => v ? Infinity : 1"
         />
         <template v-if="appStore.powerGlitchOptions.timing.iterations < Infinity">
             <NumberOption
                 class="mt-1"
-                v-model="appStore.powerGlitchOptions.shake.velocity"
-                :title="'Velocity (steps/s)'"
+                v-model="appStore.powerGlitchOptions.timing.iterations"
+                :title="'Repeat count'"
                 :min="1"
                 :max="60"
                 :step="1"
@@ -126,24 +142,24 @@ const appStore = useAppStore();
             />
         </template>
 
-        <div class="font-bold mt-6 mb-2 pl-2">Slices</div>
+        <div class="font-bold mt-6 mb-2 pl-2">Slice</div>
         <ToggleGroupOption
-            v-model="appStore.powerGlitchOptions.slices"
+            v-model="appStore.powerGlitchOptions.slice"
             :title="'Enabled'"
-            :getDefaultValue="v => v ? getDefaultOptions().slices : false"
+            :getDefaultValue="v => v ? getDefaultOptions().slice : false"
         />
-        <template v-if="appStore.powerGlitchOptions.slices">
+        <template v-if="appStore.powerGlitchOptions.slice">
             <NumberOption
                 class="mt-1"
-                v-model="appStore.powerGlitchOptions.slices.count"
-                :title="'Count (slices/step)'"
+                v-model="appStore.powerGlitchOptions.slice.count"
+                :title="'Count (slice/step)'"
                 :min="1"
                 :max="60"
                 :step="1"
             />
             <NumberOption
                 class="mt-1"
-                v-model="appStore.powerGlitchOptions.slices.velocity"
+                v-model="appStore.powerGlitchOptions.slice.velocity"
                 :title="'Velocity (steps/s)'"
                 :min="1"
                 :max="60"
@@ -151,7 +167,7 @@ const appStore = useAppStore();
             />
             <NumberOption
                 class="mt-1"
-                v-model="appStore.powerGlitchOptions.slices.minHeight"
+                v-model="appStore.powerGlitchOptions.slice.minHeight"
                 :title="'Min slice height (%)'"
                 :min="0.01"
                 :max="1.00"
@@ -160,7 +176,7 @@ const appStore = useAppStore();
             />
             <NumberOption
                 class="mt-1"
-                v-model="appStore.powerGlitchOptions.slices.maxHeight"
+                v-model="appStore.powerGlitchOptions.slice.maxHeight"
                 :title="'Max slice height (%)'"
                 :min="0.01"
                 :max="1.00"
@@ -169,7 +185,7 @@ const appStore = useAppStore();
             />
             <BooleanOption
                 class="mt-1"
-                v-model="appStore.powerGlitchOptions.slices.hueRotate"
+                v-model="appStore.powerGlitchOptions.slice.hueRotate"
                 :title="'Hue rotate'"
             />
         </template>
