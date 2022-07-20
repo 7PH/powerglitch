@@ -1,34 +1,124 @@
+/**
+ * Custom options for the glitch animations.
+ */
 export type PowerGlitchOptions = {
+
+    /**
+     * Image URL. Can be local, remote or a data URL.
+     */
     imageUrl: string,
+
+    /**
+     * Background color. Use 'transparent' not to set a background color.
+     */
     backgroundColor: string,
+
+    /**
+     * Timing of the animation.
+     */
     timing: {
+
+        /**
+         * Duration of the animation loop in milliseconds.
+         */
         duration: number,
+
+        /**
+         * Number of times the animation should repeat. Set to `Infinity` to repeat forever.
+         */
         iterations: number,
+
+        /**
+         * Ease animation for all layers. Defauls to a sequential easing (no transition).
+         */
         easing?: string,
     },
+
+    /**
+     * Specify if the animation should always glitch uniformly (if false) or if it should glitch at a given time.
+     * If start and end are set, the animation will glitch between those two times, and the peak glitch will be at the middle.
+     * glitchTimeSpan.end should be greater than glitchTimeSpan.start. Otherwise, the glitch will not happen.
+     */
     glitchTimeSpan: false | {
+
+        /**
+         * Start time of the glitch in percent, between 0 and 1.
+         */
         start: number,
+
+        /**
+         * End time of the glitch in percent, between 0 and 1.
+         */
         end: number,
     },
+
+    /**
+     * Whether the base layer should shake. If not set to false, the base layer will shake in the given amplitude.
+     * The shake animation respects the glitch time span constraint, if set.
+     */
     shake: false | {
+
+        /**
+         * Number of steps to compute for each layer per second of animation.
+         */
         velocity: number,
+
+        /**
+         * Max X amplitude for the shake animation.
+         */
         amplitudeX: number,
+
+        /**
+         * Max Y amplitude for the shake animation.
+         */
         amplitudeY: number,
     },
+
+    /**
+     * Slice layers are the base animation to give the glitch effect. They clip a part of the image and move it somewhere else.
+     * If not set to false, the slice layers will be generated.
+     * The slice animation respects the glitch time span constraint, if set.
+     */
     slice: false | {
+
+        /**
+         * Number of layers to generate.
+         */
         count: number,
+
+        /**
+         * Number of steps to compute for each layer per second of animation.
+         */
         velocity: number,
+
+        /**
+         * Minimum height in percent for a given slice, between 0 and 1.
+         */
         minHeight: number,
+        
+        /**
+         * Maximum height in percent for a given slice, between 0 and 1.
+         */
         maxHeight: number,
+
+        /**
+         * Whether the hue should rotate for the given slice.
+         */
         hueRotate: boolean,
     },
 };
 
+/**
+ * One layer to generate
+ */
 export type LayerDefinition = {
     steps: { [cssPropertyName: string]: string }[],
     timing: any,
 };
 
+/**
+ * A rectangle in %, values from 0 to 100.
+ */
 export type Rectangle = {
     top: number,
     left: number,
@@ -36,6 +126,9 @@ export type Rectangle = {
     width: number,
 };
 
+/**
+ * Get best-looking default options for most images.
+ */
 export const getDefaultOptions = (): Partial<PowerGlitchOptions> => ({
     backgroundColor: 'transparent',
     timing: {
@@ -90,7 +183,11 @@ const getGlitchRandom = (options: PowerGlitchOptions, stepPct: number) => {
 
 
 /**
- * Get a random rectangle values in % to glitch. Rectangles never exceed 50% of the container height.
+ * Get a random rectangle values in % to glitch. Percent values are between 0 and 100.
+ * @param minHeight Minimum height of the rectangle in percent, between 0 and 1.
+ * @param maxHeight Maximum height of the rectangle in percent, between 0 and 1.
+ * @param minWidth Minimum width of the rectangle in percent, between 0 and 1.
+ * @param maxWidth Maximum width of the rectangle in percent, between 0 and 1.
  */
 const getRandomRectangle = ({ minHeight, maxHeight, minWidth, maxWidth }: { minHeight: number, maxHeight: number, minWidth: number, maxWidth: number }): Rectangle => {
     // Choose a random size for this rectangle
@@ -107,6 +204,7 @@ const getRandomRectangle = ({ minHeight, maxHeight, minWidth, maxWidth }: { minH
 
 /**
  * Transform a rectangle into a CSS polygon.
+ * @param rectangle Rectangle to transform.
  */
 const getRectanglePolygonCss = ({ top, left, height, width }: Rectangle) => {
     const topRight = `${left + width}% ${top}%`;
@@ -117,7 +215,8 @@ const getRectanglePolygonCss = ({ top, left, height, width }: Rectangle) => {
 };
 
 /**
- * Get default timing function
+ * Get default timing function, which makes sequential changes without transition.
+ * @param stepCount Number of steps in the animation
  */
 const getDefaultTimingCss = (stepCount: number) => {
     return {
@@ -126,7 +225,8 @@ const getDefaultTimingCss = (stepCount: number) => {
 };
 
 /**
- * Generate one layer
+ * Generate a slice layer, slicing part of the image and moving it somwhere else.
+ * @param options
  */
 const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
     if (! options.slice) {
@@ -150,7 +250,8 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
 };
 
 /**
- * Generate the base layer
+ * Generate the base layer, which may or may not shake depending on the options.
+ * @param options
  */
 const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
 
@@ -173,6 +274,7 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
 
 /**
  * Generate all layers
+ * @param options
  */
 const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
     const layers = [];
@@ -189,12 +291,15 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
 };
 
 /**
- * 
+ * Make a single element glitch.
+ * @param elOrSelector Element or selector to glitch.
+ * @param options Options for the glitch.
  */
 const glitch = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOptions) => {
     // Fix options with defaults
     options = { ...getDefaultOptions(), ...options };
-    // Find selector or element
+
+    // Find element
     if (typeof elOrSelector === 'string') {
         const element = document.querySelector<HTMLDivElement>(elOrSelector);
         if (! element) {

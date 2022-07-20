@@ -78,12 +78,12 @@ or
             <div class="mt-1">PowerGlitch</div>
         </div>
         <p class="text-center mt-4 text-lg">
-            A tiny library to glitch any image shown in the web.
+            A tiny library to glitch images on the web.
         </p>
         <div class="mt-2 flex justify-center gap-4">
-            <RouterLink to="/api" class="underline">api</RouterLink>
             <RouterLink to="/" class="">home</RouterLink>
             <RouterLink to="/playground" class="underline">playground</RouterLink>
+            <RouterLink to="/api" class="underline">api</RouterLink>
             <a target="_blank" href="https://github.com/7PH/powerglitch" class="underline">github</a>
         </div>
 
@@ -94,7 +94,7 @@ or
         <!-- Introduction -->
         <h1 class="font-bold mt-8">❓ Introduction</h1>
         <p class="mt-4">
-            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on any image. No canvas drawing or DOM manipulations are needed to create the glitch effect.<br>
+            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on any image. No canvas or DOM manipulations are needed to create the glitch effect.<br>
             <br>
             What are you waiting for? <RouterLink to="playground" class="underline">Try glitching stuff now ⚡!</RouterLink>
         </p>

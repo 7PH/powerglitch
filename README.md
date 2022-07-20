@@ -1,6 +1,6 @@
 <img src="./assets/intro.gif">
 
-PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on any image. No canvas drawing or DOM manipulations are needed to create the glitch effect.
+PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on any image. No canvas or DOM manipulations are needed to create the glitch effect.
 
 Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/playground) 😊
 
