@@ -1,6 +1,6 @@
 {
     "name": "powerglitch",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "scripts": {
@@ -10,7 +10,6 @@
         "preview:docs": "vite preview"
     },
     "files": [
-        "/assets",
         "/lib"
     ],
     "devDependencies": {

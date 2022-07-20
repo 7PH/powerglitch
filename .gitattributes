@@ -1,0 +1,2 @@
+# Ignore vue files so the library is correctly shown as TypeScript in Github
+*.vue linguist-detectable=false
