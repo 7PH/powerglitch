@@ -1,12 +1,17 @@
 {
     "name": "powerglitch",
     "version": "0.1.0",
-    "type": "module",
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts",
     "scripts": {
-        "docs:dev": "vite",
-        "docs:build": "vite build --emptyOutDir",
-        "docs:preview": "vite preview"
+        "dev:docs": "vite",
+        "build:docs": "vite build --emptyOutDir",
+        "build:lib": "tsc",
+        "preview:docs": "vite preview"
     },
+    "files": [
+        "/lib"
+    ],
     "devDependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.1.1",
         "@fortawesome/free-brands-svg-icons": "^6.1.1",
