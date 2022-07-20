@@ -5,6 +5,7 @@ import { PowerGlitch, getDefaultOptions } from '../../../src/index.ts';
 import logo from '@/assets/logo.png';
 import ToggleGroupOption from '@/components/ToggleGroupOption.vue';
 import StringOption from '@/components/StringOption.vue';
+import SelectOption from '@/components/SelectOption.vue';
 import BooleanOption from '@/components/BooleanOption.vue';
 import NumberOption from '@/components/NumberOption.vue';
 
@@ -79,8 +80,23 @@ onMounted(() => {
                 :step="1"
             />
         </template>
+        <ToggleGroupOption
+            class="mt-1"
+            :modelValue="!! appStore.powerGlitchOptions.timing.easing"
+            @update:modelValue="easing => appStore.powerGlitchOptions.timing.easing = easing"
+            :title="'Smooth transition'"
+            :getDefaultValue="v => v ? 'ease-in-out' : undefined"
+        />
+        <template v-if="!! appStore.powerGlitchOptions.timing.easing">
+            <SelectOption
+                class="mt-1"
+                v-model="appStore.powerGlitchOptions.timing.easing"
+                :title="'Easing'"
+                :values="['ease-in-out', 'ease-in', 'ease-out', 'linear']"
+            />
+        </template>
 
-        <div class="font-bold mt-6 mb-2 pl-2">Glitch Time Span</div>
+        <div class="font-bold mt-6 mb-2 pl-2">Restrict glitch time span</div>
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.glitchTimeSpan"
             :title="'Enabled'"

@@ -113,7 +113,7 @@ export type PowerGlitchOptions = {
  */
 export type LayerDefinition = {
     steps: { [cssPropertyName: string]: string }[],
-    timing: any,
+    timing: EffectTiming,
 };
 
 /**
@@ -140,13 +140,13 @@ export const getDefaultOptions = (): Partial<PowerGlitchOptions> => ({
         end: 0.7,
     },
     shake: {
-        velocity: 20,
+        velocity: 15,
         amplitudeX: 0.4,
         amplitudeY: 0.4,
     },
     slice: {
-        count: 10,
-        velocity: 25,
+        count: 6,
+        velocity: 15,
         minHeight: 0.02,
         maxHeight: 0.15,
         hueRotate: true,
@@ -220,6 +220,7 @@ const getRectanglePolygonCss = ({ top, left, height, width }: Rectangle) => {
  */
 const getDefaultTimingCss = (stepCount: number) => {
     return {
+        ...getDefaultOptions().timing,
         easing: `steps(${stepCount}, jump-start)`,
     };
 };
@@ -291,13 +292,45 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
 };
 
 /**
+* Performs a deep merge of objects and returns new object. Does not modify
+* objects (immutable) and merges arrays via concatenation.
+* @param objects - Objects to merge
+* @returns New object with merged key/values
+*/
+function mergeDeep(...objects: any[]): any {
+    const isObject = (obj: any) => obj && typeof obj === 'object';
+    return objects.reduce((prev, obj) => {
+        Object.keys(obj)
+            .forEach(key => {
+                const pVal = prev[key];
+                const oVal = obj[key];
+
+                if (Array.isArray(pVal) && Array.isArray(oVal)) {
+                    prev[key] = pVal.concat(...oVal);
+                    return;
+                }
+                if (isObject(pVal) && isObject(oVal)) {
+                    prev[key] = mergeDeep(pVal, oVal);
+                    return;
+                }
+                if (oVal !== undefined) {
+                    prev[key] = oVal;
+                }
+            });
+
+        return prev;
+    }, {});
+}
+  
+
+/**
  * Make a single element glitch.
  * @param elOrSelector Element or selector to glitch.
  * @param options Options for the glitch.
  */
 const glitch = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOptions) => {
     // Fix options with defaults
-    options = { ...getDefaultOptions(), ...options };
+    options = mergeDeep(getDefaultOptions(), options);
 
     // Find element
     if (typeof elOrSelector === 'string') {

@@ -30,8 +30,8 @@ onMounted(() => {
         </p>
         <div class="mt-2 flex justify-center gap-4">
             <RouterLink to="/" class="underline">home</RouterLink>
-            <RouterLink to="/playground" class="underline">playground</RouterLink>
             <RouterLink to="/api" class="">api</RouterLink>
+            <RouterLink to="/playground" class="underline">playground</RouterLink>
             <a target="_blank" href="https://github.com/7PH/powerglitch" class="underline">github</a>
         </div>
 

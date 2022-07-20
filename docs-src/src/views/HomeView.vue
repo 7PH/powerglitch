@@ -31,9 +31,6 @@ onMounted(() => {
         slice: {
             count: 3,
             velocity: 4,
-            minHeight: 0.01,
-            maxHeight: 0.15,
-            hueRotate: true,
         },
     });
     PowerGlitch.glitch(frog3Glitch.value, {
@@ -42,8 +39,8 @@ onMounted(() => {
     PowerGlitch.glitch(frog4Glitch.value, {
         imageUrl: exampleFrog,
         glitchTimeSpan: {
-            start: 0,
-            end: 1,
+            start: 0.2,
+            end: 0.8,
         },
     });
 });
@@ -51,7 +48,9 @@ onMounted(() => {
 // Usage example
 const usageExample = `
 import { PowerGlitch } from 'powerglitch';
-PowerGlitch.glitch('#my-image', { imageUrl: logo });
+PowerGlitch.glitch('#my-image', {
+    imageUrl: 'https://.../image.png'
+});
 `.trim();
 
 // Install
@@ -63,7 +62,7 @@ or
 </script>
 
 <template>
-    <div class="app w-full mx-auto my-8">
+    <div class="app w-full mx-auto mb-8 mt-16 md:mt-8 px-4">
 
         <!-- GitHub -->
         <p class="fixed right-0 top-0 mx-6 my-4 text-4xl">
@@ -82,19 +81,19 @@ or
         </p>
         <div class="mt-2 flex justify-center gap-4">
             <RouterLink to="/" class="">home</RouterLink>
-            <RouterLink to="/playground" class="underline">playground</RouterLink>
             <RouterLink to="/api" class="underline">api</RouterLink>
+            <RouterLink to="/playground" class="underline">playground</RouterLink>
             <a target="_blank" href="https://github.com/7PH/powerglitch" class="underline">github</a>
         </div>
 
         <!-- Usage -->
         <h1 class="font-bold mt-8">🔨 Usage</h1>
-        <pre class="border border-gray-400 rounded-xl p-4 mt-4 bg-gray-300" v-html="usageExample"></pre>
+        <pre class="border border-gray-400 overflow-x-auto rounded-xl p-4 mt-4 bg-gray-300" v-html="usageExample"></pre>
 
         <!-- Introduction -->
         <h1 class="font-bold mt-8">❓ Introduction</h1>
         <p class="mt-4">
-            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on any image. No canvas or DOM manipulations are needed to create the glitch effect.<br>
+            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed.<br>
             <br>
             What are you waiting for? <RouterLink to="playground" class="underline">Try glitching stuff now ⚡!</RouterLink>
         </p>
