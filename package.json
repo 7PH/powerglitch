@@ -1,12 +1,14 @@
 {
     "name": "powerglitch",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "scripts": {
         "dev:docs": "vite",
         "build:docs": "vite build --emptyOutDir",
         "build:lib": "tsc",
+        "build:dist": "rm -rf dist; rollup -c",
+        "build": "npm run build:docs && npm run build:lib && npm run build:dist",
         "preview:docs": "vite preview"
     },
     "files": [
@@ -22,6 +24,8 @@
         "autoprefixer": "^10.4.7",
         "pinia": "^2.0.16",
         "postcss": "^8.4.14",
+        "rollup": "^2.77.0",
+        "rollup-plugin-esbuild": "^4.9.1",
         "tailwindcss": "^3.1.6",
         "vite": "^3.0.0",
         "vue": "^3.2.37",

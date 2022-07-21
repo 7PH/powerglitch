@@ -86,14 +86,10 @@ or
             <a target="_blank" href="https://github.com/7PH/powerglitch" class="underline">github</a>
         </div>
 
-        <!-- Usage -->
-        <h1 class="font-bold mt-8">🔨 Usage</h1>
-        <pre class="border border-gray-400 overflow-x-auto rounded-xl p-4 mt-4 bg-gray-300" v-html="usageExample"></pre>
-
         <!-- Introduction -->
         <h1 class="font-bold mt-8">❓ Introduction</h1>
         <p class="mt-4">
-            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed.<br>
+            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed. It weights around <b>1.5kb</b> minified and gzipped and <b>4kb</b> minified.<br>
             <br>
             What are you waiting for? <RouterLink to="playground" class="underline">Try glitching stuff now ⚡!</RouterLink>
         </p>
@@ -110,6 +106,11 @@ or
         <!-- Install -->
         <h1 class="font-bold mt-8">🔽 Install</h1>
         <pre class="border border-gray-400 rounded-xl p-4 mt-4 bg-gray-300" v-html="installExample"></pre>
+        <p class="mt-4">Alternatively, you can <a class="underline" target="_blank" href="https://raw.githubusercontent.com/7PH/powerglitch/master/dist/powerglitch.min.js">download minified web bundle</a> and use it directly in your project.</p>
+
+        <!-- Usage -->
+        <h1 class="font-bold mt-8">🔨 Usage</h1>
+        <pre class="border border-gray-400 overflow-x-auto rounded-xl p-4 mt-4 bg-gray-300" v-html="usageExample"></pre>
 
         <!-- Contribute -->
         <h1 class="font-bold mt-8">🤝 Support and bugs</h1>

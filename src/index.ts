@@ -1,7 +1,7 @@
 /**
  * Custom options for the glitch animations.
  */
-export type PowerGlitchOptions = {
+type PowerGlitchOptions = {
 
     /**
      * Image URL. Can be local, remote or a data URL.
@@ -111,7 +111,7 @@ export type PowerGlitchOptions = {
 /**
  * One layer to generate
  */
-export type LayerDefinition = {
+type LayerDefinition = {
     steps: { [cssPropertyName: string]: string }[],
     timing: EffectTiming,
 };
@@ -119,7 +119,7 @@ export type LayerDefinition = {
 /**
  * A rectangle in %, values from 0 to 100.
  */
-export type Rectangle = {
+type Rectangle = {
     top: number,
     left: number,
     height: number,
@@ -129,7 +129,7 @@ export type Rectangle = {
 /**
  * Get best-looking default options for most images.
  */
-export const getDefaultOptions = (): Partial<PowerGlitchOptions> => ({
+const getDefaultOptions = (): Partial<PowerGlitchOptions> => ({
     backgroundColor: 'transparent',
     timing: {
         duration: 2 * 1000,
@@ -370,4 +370,5 @@ const glitch = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOptio
 
 export const PowerGlitch = {
     glitch,
+    getDefaultOptions,
 };

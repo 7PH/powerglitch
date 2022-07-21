@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import defaultImage from '@/assets/default.png';
-import { getDefaultOptions } from '../../../src/index.ts';
+import { PowerGlitch } from '../../../src/index.ts';
 
 
 export const useAppStore = defineStore('main', {
@@ -10,7 +10,7 @@ export const useAppStore = defineStore('main', {
          * Default options for Power Glitch
          */
         powerGlitchOptions: {
-            ...getDefaultOptions(),
+            ...PowerGlitch.getDefaultOptions(),
             imageUrl: defaultImage,
         },
     }),

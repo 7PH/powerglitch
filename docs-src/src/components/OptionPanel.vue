@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAppStore } from '@/stores/app';
-import { PowerGlitch, getDefaultOptions } from '../../../src/index.ts';
+import { PowerGlitch } from '../../../src/index.ts';
 import logo from '@/assets/logo.png';
 import ToggleGroupOption from '@/components/ToggleGroupOption.vue';
 import StringOption from '@/components/StringOption.vue';
@@ -16,7 +16,7 @@ onMounted(() => {
     PowerGlitch.glitch(
         logoGlitch.value,
         {
-            ...getDefaultOptions(),
+            ...PowerGlitch.getDefaultOptions(),
             imageUrl: logo,
         }
     )
@@ -100,7 +100,7 @@ onMounted(() => {
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.glitchTimeSpan"
             :title="'Enabled'"
-            :getDefaultValue="v => v ? getDefaultOptions().glitchTimeSpan : false"
+            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions().glitchTimeSpan : false"
         />
         <template v-if="appStore.powerGlitchOptions.glitchTimeSpan">
             <NumberOption
@@ -127,7 +127,7 @@ onMounted(() => {
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.shake"
             :title="'Enabled'"
-            :getDefaultValue="v => v ? getDefaultOptions().shake : false"
+            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions().shake : false"
         />
         <template v-if="appStore.powerGlitchOptions.shake">
             <NumberOption
@@ -162,7 +162,7 @@ onMounted(() => {
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.slice"
             :title="'Enabled'"
-            :getDefaultValue="v => v ? getDefaultOptions().slice : false"
+            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions().slice : false"
         />
         <template v-if="appStore.powerGlitchOptions.slice">
             <NumberOption
