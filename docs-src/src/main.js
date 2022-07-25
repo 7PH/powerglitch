@@ -3,12 +3,13 @@ import { createPinia } from 'pinia';
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import '@/style.css';
-import library from '@/icons';
+import { loadIcons } from '@/icons';
 import App from '@/App.vue';
 import HomeView from '@/views/HomeView.vue';
 import APIReferenceView from '@/views/APIReferenceView.vue';
 import PlaygroundView from '@/views/PlaygroundView.vue';
 
+loadIcons();
 const pinia = createPinia();
 
 // Init router

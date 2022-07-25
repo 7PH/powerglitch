@@ -4,8 +4,8 @@ import {
     faGithub,
 } from '@fortawesome/free-brands-svg-icons';
 
-library.add(
-    faGithub,
-);
-
-export default library;
+export const loadIcons = () => {
+    library.add(
+        faGithub,
+    );
+};

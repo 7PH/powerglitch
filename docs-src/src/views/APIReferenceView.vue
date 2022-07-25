@@ -11,7 +11,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="app w-full mx-auto my-8">
+    <div class="app w-full mx-auto mb-8 mt-16 md:mt-8 px-4">
 
         <!-- GitHub -->
         <p class="fixed right-0 top-0 mx-6 my-4 text-4xl">

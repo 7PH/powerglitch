@@ -245,7 +245,7 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
             styles.filter = `hue-rotate(${Math.floor(getGlitchRandom(options, index / stepCount) * 360)}deg)`;
         }
         steps.push(styles);
-    };
+    }
     
     return { steps, timing: { ...getDefaultTimingCss(stepCount), ...options.timing } };
 };
@@ -268,9 +268,9 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
         const styles: {[cssPropertyName: string]: string} = {};
         styles.transform = `translate3d(${translateX}%, ${translateY}%, 0)`;
         steps.push(styles);
-    };
+    }
     return { steps, timing: { ...getDefaultTimingCss(stepCount), ...options.timing } };
-}
+};
 
 
 /**
@@ -297,7 +297,9 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
 * @param objects - Objects to merge
 * @returns New object with merged key/values
 */
-function mergeDeep(...objects: any[]): any {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mergeDeep(...objects: readonly any[]): any {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const isObject = (obj: any) => obj && typeof obj === 'object';
     return objects.reduce((prev, obj) => {
         Object.keys(obj)

@@ -1,6 +1,6 @@
 {
     "name": "powerglitch",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "scripts": {
@@ -9,7 +9,9 @@
         "build:lib": "tsc",
         "build:dist": "rm -rf dist; rollup -c",
         "build": "npm run build:docs && npm run build:lib && npm run build:dist",
-        "preview:docs": "vite preview"
+        "preview:docs": "vite preview",
+        "lint": "eslint src/**/*.ts",
+        "fix-lint": "eslint --fix src/**/*.ts"
     },
     "files": [
         "/lib"
@@ -20,8 +22,12 @@
         "@fortawesome/free-regular-svg-icons": "^6.1.1",
         "@fortawesome/free-solid-svg-icons": "^6.1.1",
         "@fortawesome/vue-fontawesome": "^3.0.1",
+        "@typescript-eslint/eslint-plugin": "^5.31.0",
+        "@typescript-eslint/parser": "^5.31.0",
         "@vitejs/plugin-vue": "^3.0.0",
         "autoprefixer": "^10.4.7",
+        "eslint": "^8.20.0",
+        "eslint-plugin-vue": "^9.3.0",
         "pinia": "^2.0.16",
         "postcss": "^8.4.14",
         "rollup": "^2.77.0",
