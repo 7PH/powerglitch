@@ -4,9 +4,9 @@
 type PowerGlitchOptions = {
 
     /**
-     * Image URL. Can be local, remote or a data URL.
+     * Image URL. Can be local, remote or a data URL. Needs to be set if glitching divs.
      */
-    imageUrl: string,
+    imageUrl?: string,
 
     /**
      * Background color. Use 'transparent' not to set a background color.
@@ -272,7 +272,6 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
     return { steps, timing: { ...getDefaultTimingCss(stepCount), ...options.timing } };
 };
 
-
 /**
  * Generate all layers
  * @param options
@@ -289,6 +288,39 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
     }
 
     return layers;
+};
+
+/**
+ * Animate a given div with a given set of layers, showing the specified image.
+ * @param div 
+ * @param layers 
+ * @param imageUrl 
+ */
+const animateDiv = (div: HTMLDivElement, layers: LayerDefinition[], backgroundColor: string, imageUrl: string) => {
+    const templateLayer = document.createElement('div');
+    templateLayer.classList.add('layer');
+    templateLayer.style.backgroundColor = backgroundColor;
+    templateLayer.style.backgroundRepeat = 'no-repeat';
+    templateLayer.style.backgroundPosition = 'center';
+    templateLayer.style.backgroundSize = 'contain';
+    templateLayer.style.width = '100%';
+    templateLayer.style.height = '100%';
+    templateLayer.style.top = '0';
+    templateLayer.style.left = '0';
+    templateLayer.style.position = 'absolute';
+    // Empty & init. div style
+    div.style.position = 'relative';
+    div.style.overflow = 'hidden';
+    while (div.firstChild) {
+        div.removeChild(div.firstChild);
+    }
+    // For each animation layer, clone template layer, tweak styles, and append to element
+    for (const layer of layers) {
+        const layerDiv = templateLayer.cloneNode(false) as HTMLDivElement;
+        layerDiv.style.backgroundImage = `url(${imageUrl})`;
+        layerDiv.animate(layer.steps, layer.timing);
+        div.appendChild(layerDiv);
+    }
 };
 
 /**
@@ -323,21 +355,20 @@ function mergeDeep(...objects: readonly any[]): any {
         return prev;
     }, {});
 }
-  
 
 /**
  * Make a single element glitch.
  * @param elOrSelector Element or selector to glitch.
- * @param options Options for the glitch.
+ * @param userOptions Options for the glitch.
  */
-const glitch = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOptions) => {
+const glitch = (elOrSelector: string | HTMLDivElement = '.powerglitch', userOptions: Partial<PowerGlitchOptions> = {}) => {
     // Fix options with defaults
-    options = mergeDeep(getDefaultOptions(), options);
+    const options: PowerGlitchOptions = mergeDeep(getDefaultOptions(), userOptions);
 
-    // Find elements
-    let elements: HTMLDivElement[] = [];
+    // Find elements to glitch
+    let elements: (HTMLDivElement | HTMLImageElement)[] = [];
     if (typeof elOrSelector === 'string') {
-        const foundElements = document.querySelectorAll<HTMLDivElement>(elOrSelector);
+        const foundElements = document.querySelectorAll<HTMLDivElement | HTMLImageElement>(elOrSelector);
         if (! foundElements.length) {
             throw new Error(`Could not find any element with selector ${elOrSelector}`);
         }
@@ -346,37 +377,35 @@ const glitch = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOptio
         elements = [elOrSelector];
     }
 
-    // Prepare containers
-    for (const element of elements) {
-        element.style.position = 'relative';
-        element.style.overflow = 'hidden';
-        while (element.firstChild) {
-            element.removeChild(element.firstChild);
+    // Discriminate between img and div for code simplicity
+    const imgElements = elements.filter(el => el instanceof HTMLImageElement) as HTMLImageElement[];
+    const divElements = elements.filter(el => el instanceof HTMLDivElement) as HTMLDivElement[];
+
+    // Generate all animation layers
+    const layers = generateLayers(options);
+
+    // Animate each image element
+    for (const imgElement of imgElements) {
+        const newContainer = document.createElement('div');
+        newContainer.style.width = imgElement.clientWidth + 'px';
+        newContainer.style.height = imgElement.clientHeight + 'px';
+        if (! imgElement.parentElement) {
+            throw new Error('Unable to glitch image, it is not attached to a parent element');
         }
+        imgElement.parentElement.insertBefore(newContainer, imgElement);
+        // Keep but hide the image, to avoid breaking the original application
+        imgElement.style.display = 'none';
+        // Animate the new container
+        animateDiv(newContainer, layers, options.backgroundColor, options.imageUrl || imgElement.src);
     }
 
-    // Create template layer
-    const templateLayer = document.createElement('div');
-    templateLayer.classList.add('layer');
-    templateLayer.style.backgroundColor = options.backgroundColor;
-    templateLayer.style.backgroundImage = `url(${options.imageUrl})`;
-    templateLayer.style.backgroundRepeat = 'no-repeat';
-    templateLayer.style.backgroundPosition = 'center';
-    templateLayer.style.backgroundSize = 'contain';
-    templateLayer.style.width = '100%';
-    templateLayer.style.height = '100%';
-    templateLayer.style.top = '0';
-    templateLayer.style.left = '0';
-    templateLayer.style.position = 'absolute';
-
-    // Create and animate layers
-    const layers = generateLayers(options);
-    for (const element of elements) {
-        for (const layer of layers) {
-            const layerDiv = templateLayer.cloneNode(false) as HTMLDivElement;
-            layerDiv.animate(layer.steps, layer.timing);
-            element.appendChild(layerDiv);
+    // Animate each div element
+    for (const divElement of divElements) {
+        // If options.imageUrl was not set, we do not know what src to use to glitch this div
+        if (! options.imageUrl) {
+            throw new Error('Options.imageUrl must be set if there are div elements to glitch');
         }
+        animateDiv(divElement, layers, options.backgroundColor, options.imageUrl);
     }
 };
 

@@ -1,6 +1,6 @@
 <img src="./assets/intro.gif">
 
-PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed. It weights around 1.5kb minified and gzipped and 4kb minified.<br>
+PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed. It weights around 1.8kb minified and gzipped and 4kb minified.<br>
 
 Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/playground) 😊
 
@@ -21,15 +21,9 @@ Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/pla
     <script src="./path/to/your/powerglitch.min.js"></script>
     ```
 
-2. Add a container for the image with fixed width and height
+2. Find an image to glitch
     ```html
-    <div id="glitched-image"></div>
-    ```
-    ```css
-    #glitched-image {
-        width: 80px;
-        height: 80px;
-    }
+    <img src='https://.../image.png' class='glitch' />
     ```
 
 3. Import PowerGlitch using ES6 import
@@ -44,47 +38,14 @@ Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/pla
 
 4. Glitch the image
     ```javascript
-    PowerGlitch.glitch(
-        '#glitched-image',
-        {
-            imageUrl: 'https://raw.githubusercontent.com/7PH/powerglitch/master/assets/logo-128.png'
-        },
-    )
+    PowerGlitch.glitch('img.glitch')
     ```
 
-5. Customize the glitch effect
-    ```javascript
-    PowerGlitch.glitch(
-        '#glitched-image',
-        {
-            imageUrl: 'https://raw.githubusercontent.com/7PH/powerglitch/master/assets/logo-128.png',
-            backgroundColor: 'transparent',
-            timing: {
-                duration: 2 * 1000,
-                iterations: Infinity,
-            },
-            glitchTimeSpan: {
-                start: 0.5,
-                end: 0.7,
-            },
-            shake: {
-                velocity: 15,
-                amplitudeX: 0.4,
-                amplitudeY: 0.4,
-            },
-            slice: {
-                count: 6,
-                velocity: 15,
-                minHeight: 0.02,
-                maxHeight: 0.15,
-                hueRotate: true,
-            },
-        }
-    )
-    ```
+5. That's it, your image is glitched!
+6. For customization and optimization tips, check-out the [usage guide](https://7ph.github.io/powerglitch/#/usage).
 
 ## Useful links
 
 - Visually try out effects using the [demo](https://7ph.github.io/powerglitch/#/playground).
 - Lookup PowerGlitch [home page](https://7ph.github.io/powerglitch/).
-- For detailed usage, check the [API Reference](https://7ph.github.io/powerglitch/#/api).
+- For customization and optimization tips, check the [usage guide](https://7ph.github.io/powerglitch/#/usage).
