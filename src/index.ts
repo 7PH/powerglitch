@@ -334,39 +334,49 @@ const glitch = (elOrSelector: string | HTMLDivElement, options: PowerGlitchOptio
     // Fix options with defaults
     options = mergeDeep(getDefaultOptions(), options);
 
-    // Find element
+    // Find elements
+    let elements: HTMLDivElement[] = [];
     if (typeof elOrSelector === 'string') {
-        const element = document.querySelector<HTMLDivElement>(elOrSelector);
-        if (! element) {
-            throw new Error(`Could not find element with selector ${elOrSelector}`);
+        const foundElements = document.querySelectorAll<HTMLDivElement>(elOrSelector);
+        if (! foundElements.length) {
+            throw new Error(`Could not find any element with selector ${elOrSelector}`);
         }
-        elOrSelector = element;
+        elements = Array.from(foundElements);
+    } else {
+        elements = [elOrSelector];
     }
 
-    // Prepare container
-    elOrSelector.style.position = 'relative';
-    elOrSelector.style.overflow = 'hidden';
-    while (elOrSelector.firstChild) {
-        elOrSelector.removeChild(elOrSelector.firstChild);
+    // Prepare containers
+    for (const element of elements) {
+        element.style.position = 'relative';
+        element.style.overflow = 'hidden';
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
+        }
     }
 
-    // Fill layers
+    // Create template layer
+    const templateLayer = document.createElement('div');
+    templateLayer.classList.add('layer');
+    templateLayer.style.backgroundColor = options.backgroundColor;
+    templateLayer.style.backgroundImage = `url(${options.imageUrl})`;
+    templateLayer.style.backgroundRepeat = 'no-repeat';
+    templateLayer.style.backgroundPosition = 'center';
+    templateLayer.style.backgroundSize = 'contain';
+    templateLayer.style.width = '100%';
+    templateLayer.style.height = '100%';
+    templateLayer.style.top = '0';
+    templateLayer.style.left = '0';
+    templateLayer.style.position = 'absolute';
+
+    // Create and animate layers
     const layers = generateLayers(options);
-    for (const layer of layers) {
-        const layerDiv = document.createElement('div');
-        layerDiv.classList.add('layer');
-        layerDiv.style.backgroundColor = options.backgroundColor;
-        layerDiv.style.backgroundImage = `url(${options.imageUrl})`;
-        layerDiv.style.backgroundRepeat = 'no-repeat';
-        layerDiv.style.backgroundPosition = 'center';
-        layerDiv.style.backgroundSize = 'contain';
-        layerDiv.style.width = '100%';
-        layerDiv.style.height = '100%';
-        layerDiv.style.top = '0';
-        layerDiv.style.left = '0';
-        layerDiv.style.position = 'absolute';
-        layerDiv.animate(layer.steps, layer.timing);
-        elOrSelector.appendChild(layerDiv);
+    for (const element of elements) {
+        for (const layer of layers) {
+            const layerDiv = templateLayer.cloneNode(false) as HTMLDivElement;
+            layerDiv.animate(layer.steps, layer.timing);
+            element.appendChild(layerDiv);
+        }
     }
 };
 
