@@ -1,3 +1,3 @@
 <template>
-    <RouterView class="h-full w-full"></RouterView>
+    <RouterView class="h-full w-full" />
 </template>

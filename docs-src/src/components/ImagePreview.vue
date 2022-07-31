@@ -21,7 +21,10 @@ watch(rebuild);
 
 <template>
     <div>
-        <div ref="container" class="glitch"></div>
+        <div
+            ref="container"
+            class="glitch"
+        />
     </div>
 </template>
 

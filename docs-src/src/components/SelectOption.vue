@@ -1,9 +1,4 @@
 <script setup>
-import { ref } from 'vue';
-import { useAppStore } from '@/stores/app';
-
-const appStore = useAppStore();
-
 defineProps({
     modelValue: {
         type: String,
@@ -33,7 +28,13 @@ defineEmits(['update:modelValue']);
                 :value="modelValue"
                 @input="$emit('update:modelValue', $event.target.value)"
             >
-                <option v-for="value in values" :key="value" :value="value">{{ value }}</option>
+                <option
+                    v-for="value in values"
+                    :key="value"
+                    :value="value"
+                >
+                    {{ value }}
+                </option>
             </select>
         </div>
     </div>

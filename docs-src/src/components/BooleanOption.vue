@@ -1,9 +1,4 @@
 <script setup>
-import { ref } from 'vue';
-import { useAppStore } from '@/stores/app';
-
-const appStore = useAppStore();
-
 defineProps({
     modelValue: {
         type: Boolean,
@@ -29,8 +24,12 @@ defineEmits(['update:modelValue']);
                 :value="modelValue"
                 @input="$emit('update:modelValue', $event.target.value === 'true')"
             >
-                <option value="true">Yes</option>
-                <option value="false">No</option>
+                <option value="true">
+                    Yes
+                </option>
+                <option value="false">
+                    No
+                </option>
             </select>
         </div>
     </div>

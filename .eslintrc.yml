@@ -3,8 +3,8 @@ env:
     es2021: true
 extends:
     - eslint:recommended
-    - plugin:vue/vue3-essential
     - plugin:@typescript-eslint/recommended
+    - plugin:vue/vue3-recommended
 parserOptions:
     ecmaVersion: latest
     parser: '@typescript-eslint/parser'
@@ -25,3 +25,10 @@ rules:
     semi:
         - error
         - always
+    vue/html-indent:
+        - warn
+        - 4
+    vue/attribute-hyphenation:
+        - off
+    vue/v-on-event-hyphenation:
+        - off

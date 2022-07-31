@@ -11,9 +11,9 @@
         "build": "npm run build:docs && npm run build:lib && npm run build:dist",
         "preview:docs": "vite preview",
         "size": "size-limit",
-        "lint": "eslint src/**/*.ts",
-        "test": "npm run lint && npm run size",
-        "fix-lint": "eslint --fix src/**/*.ts"
+        "lint": "eslint src/**/*.ts docs-src/**/*.vue",
+        "lint-fix": "eslint --fix src/**/*.ts docs-src/**/*.vue",
+        "test": "npm run lint && npm run size"
     },
     "files": [
         "/lib"

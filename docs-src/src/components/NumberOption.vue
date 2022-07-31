@@ -1,9 +1,4 @@
 <script setup>
-import { ref } from 'vue';
-import { useAppStore } from '@/stores/app';
-
-const appStore = useAppStore();
-
 defineProps({
     modelValue: {
         type: Number,
@@ -42,20 +37,20 @@ defineEmits(['update:modelValue']);
         <div class="col-span-8 flex gap-4 overflow-x-hidden">
             <input
                 class="w-20"
-                :value="modelValue * factor"
-                @change="$emit('update:modelValue', (parseInt($event.target.value) / factor))"
                 type="number"
+                :value="modelValue * factor"
                 :min="min * factor"
                 :max="max * factor"
-            />
+                @change="$emit('update:modelValue', (parseInt($event.target.value) / factor))"
+            >
             <input
                 :value="modelValue * factor"
-                @input="$emit('update:modelValue', (parseInt($event.target.value) / factor))"
                 type="range"
                 :min="min * factor"
                 :max="max * factor"
                 :step="step * factor"
-            />
+                @input="$emit('update:modelValue', (parseInt($event.target.value) / factor))"
+            >
         </div>
     </div>
 </template>

@@ -1,9 +1,4 @@
 <script setup>
-import { ref } from 'vue';
-import { useAppStore } from '@/stores/app';
-
-const appStore = useAppStore();
-
 defineProps({
     modelValue: {
         type: String,
@@ -29,7 +24,7 @@ defineEmits(['update:modelValue']);
                 :placeholder="title"
                 :value="modelValue"
                 @input="$emit('update:modelValue', $event.target.value)"
-            />
+            >
         </div>
     </div>
 </template>

@@ -19,17 +19,19 @@ onMounted(() => {
             ...PowerGlitch.getDefaultOptions(),
             imageUrl: logo,
         }
-    )
+    );
 });
 
 </script>
 
 <template>
     <div class="px-4">
-
         <div class="font-bold text-xl mb-4 flex">
             <div class="grow flex gap-2">
-                <div ref="logoGlitch" style="width: 30px; height: 30px;"></div> PowerGlitch
+                <div
+                    ref="logoGlitch"
+                    style="width: 30px; height: 30px;"
+                /> PowerGlitch
             </div>
             <div>
                 <a
@@ -42,22 +44,26 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="font-bold mt-6 mb-2 pl-2">Global</div>
+        <div class="font-bold mt-6 mb-2 pl-2">
+            Global
+        </div>
         <StringOption
-            class="mt-1"
             v-model="appStore.powerGlitchOptions.imageUrl"
+            class="mt-1"
             :title="'Image'"
         />
         <StringOption
-            class="mt-1"
             v-model="appStore.powerGlitchOptions.backgroundColor"
+            class="mt-1"
             :title="'Background color'"
         />
 
-        <div class="font-bold mt-6 mb-2 pl-2">Timing</div>
+        <div class="font-bold mt-6 mb-2 pl-2">
+            Timing
+        </div>
         <NumberOption
-            class="mt-1"
             v-model="appStore.powerGlitchOptions.timing.duration"
+            class="mt-1"
             :title="'Loop duration (ms)'"
             :min="500"
             :max="10000"
@@ -66,14 +72,14 @@ onMounted(() => {
         <ToggleGroupOption
             class="mt-1"
             :modelValue="appStore.powerGlitchOptions.timing.iterations === Infinity"
-            @update:modelValue="iterations => appStore.powerGlitchOptions.timing.iterations = iterations"
             :title="'Repeat indefinitely'"
             :getDefaultValue="v => v ? Infinity : 1"
+            @update:modelValue="iterations => appStore.powerGlitchOptions.timing.iterations = iterations"
         />
         <template v-if="appStore.powerGlitchOptions.timing.iterations < Infinity">
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.timing.iterations"
+                class="mt-1"
                 :title="'Repeat count'"
                 :min="1"
                 :max="60"
@@ -83,20 +89,22 @@ onMounted(() => {
         <ToggleGroupOption
             class="mt-1"
             :modelValue="!! appStore.powerGlitchOptions.timing.easing"
-            @update:modelValue="easing => appStore.powerGlitchOptions.timing.easing = easing"
             :title="'Smooth transition'"
             :getDefaultValue="v => v ? 'ease-in-out' : undefined"
+            @update:modelValue="easing => appStore.powerGlitchOptions.timing.easing = easing"
         />
         <template v-if="!! appStore.powerGlitchOptions.timing.easing">
             <SelectOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.timing.easing"
+                class="mt-1"
                 :title="'Easing'"
                 :values="['ease-in-out', 'ease-in', 'ease-out', 'linear']"
             />
         </template>
 
-        <div class="font-bold mt-6 mb-2 pl-2">Restrict glitch time span</div>
+        <div class="font-bold mt-6 mb-2 pl-2">
+            Restrict glitch time span
+        </div>
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.glitchTimeSpan"
             :title="'Enabled'"
@@ -104,8 +112,8 @@ onMounted(() => {
         />
         <template v-if="appStore.powerGlitchOptions.glitchTimeSpan">
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.glitchTimeSpan.start"
+                class="mt-1"
                 :title="'Start time (%)'"
                 :min="0.00"
                 :max="1.00"
@@ -113,8 +121,8 @@ onMounted(() => {
                 :factor="100"
             />
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.glitchTimeSpan.end"
+                class="mt-1"
                 :title="'End time (%)'"
                 :min="0.00"
                 :max="1.00"
@@ -123,7 +131,9 @@ onMounted(() => {
             />
         </template>
 
-        <div class="font-bold mt-6 mb-2 pl-2">Shake</div>
+        <div class="font-bold mt-6 mb-2 pl-2">
+            Shake
+        </div>
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.shake"
             :title="'Enabled'"
@@ -131,16 +141,16 @@ onMounted(() => {
         />
         <template v-if="appStore.powerGlitchOptions.shake">
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.shake.velocity"
+                class="mt-1"
                 :title="'Velocity (steps/s)'"
                 :min="1"
                 :max="60"
                 :step="1"
             />
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.shake.amplitudeX"
+                class="mt-1"
                 :title="'X amplitude (%)'"
                 :min="0.00"
                 :max="2.00"
@@ -148,8 +158,8 @@ onMounted(() => {
                 :factor="100"
             />
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.shake.amplitudeY"
+                class="mt-1"
                 :title="'Y amplitude (%)'"
                 :min="0.00"
                 :max="2.00"
@@ -158,7 +168,9 @@ onMounted(() => {
             />
         </template>
 
-        <div class="font-bold mt-6 mb-2 pl-2">Slice</div>
+        <div class="font-bold mt-6 mb-2 pl-2">
+            Slice
+        </div>
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.slice"
             :title="'Enabled'"
@@ -166,24 +178,24 @@ onMounted(() => {
         />
         <template v-if="appStore.powerGlitchOptions.slice">
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.slice.count"
+                class="mt-1"
                 :title="'Count (slice/step)'"
                 :min="1"
                 :max="60"
                 :step="1"
             />
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.slice.velocity"
+                class="mt-1"
                 :title="'Velocity (steps/s)'"
                 :min="1"
                 :max="60"
                 :step="1"
             />
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.slice.minHeight"
+                class="mt-1"
                 :title="'Min slice height (%)'"
                 :min="0.01"
                 :max="1.00"
@@ -191,8 +203,8 @@ onMounted(() => {
                 :factor="100"
             />
             <NumberOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.slice.maxHeight"
+                class="mt-1"
                 :title="'Max slice height (%)'"
                 :min="0.01"
                 :max="1.00"
@@ -200,11 +212,10 @@ onMounted(() => {
                 :factor="100"
             />
             <BooleanOption
-                class="mt-1"
                 v-model="appStore.powerGlitchOptions.slice.hueRotate"
+                class="mt-1"
                 :title="'Hue rotate'"
             />
         </template>
-
     </div>
 </template>
