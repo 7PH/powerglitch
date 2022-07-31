@@ -57,6 +57,11 @@ onMounted(() => {
             class="mt-1"
             :title="'Background color'"
         />
+        <BooleanOption
+            v-model="appStore.powerGlitchOptions.hideOverflow"
+            class="mt-1"
+            :title="'Hide overflow'"
+        />
 
         <div class="font-bold mt-6 mb-2 pl-2">
             Timing

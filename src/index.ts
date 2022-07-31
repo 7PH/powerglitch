@@ -14,6 +14,11 @@ type PowerGlitchOptions = {
     backgroundColor: string,
 
     /**
+     * Whether to hide the glitch animation when it goes out of the bounding rectangle.
+     */
+    hideOverflow: boolean,
+
+    /**
      * Timing of the animation.
      */
     timing: {
@@ -129,8 +134,9 @@ type Rectangle = {
 /**
  * Get best-looking default options for most images.
  */
-const getDefaultOptions = (): Partial<PowerGlitchOptions> => ({
+const getDefaultOptions = (): PowerGlitchOptions => ({
     backgroundColor: 'transparent',
+    hideOverflow: false,
     timing: {
         duration: 2 * 1000,
         iterations: Infinity,
@@ -294,12 +300,13 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
  * Animate a given div with a given set of layers, showing the specified image.
  * @param div 
  * @param layers 
+ * @param options
  * @param imageUrl 
  */
-const animateDiv = (div: HTMLDivElement, layers: LayerDefinition[], backgroundColor: string, imageUrl: string) => {
+const animateDiv = (div: HTMLDivElement, layers: LayerDefinition[], options: PowerGlitchOptions, imageUrl: string) => {
     const templateLayer = document.createElement('div');
     templateLayer.classList.add('layer');
-    templateLayer.style.backgroundColor = backgroundColor;
+    templateLayer.style.backgroundColor = options.backgroundColor;
     templateLayer.style.backgroundRepeat = 'no-repeat';
     templateLayer.style.backgroundPosition = 'center';
     templateLayer.style.backgroundSize = 'contain';
@@ -310,7 +317,11 @@ const animateDiv = (div: HTMLDivElement, layers: LayerDefinition[], backgroundCo
     templateLayer.style.position = 'absolute';
     // Empty & init. div style
     div.style.position = 'relative';
-    div.style.overflow = 'hidden';
+    if (options.hideOverflow) {
+        div.style.overflow = 'hidden';
+    } else {
+        div.style.overflow = 'visible';
+    }
     while (div.firstChild) {
         div.removeChild(div.firstChild);
     }
@@ -396,7 +407,7 @@ const glitch = (elOrSelector: string | HTMLDivElement = '.powerglitch', userOpti
         // Keep but hide the image, to avoid breaking the original application
         imgElement.style.display = 'none';
         // Animate the new container
-        animateDiv(newContainer, layers, options.backgroundColor, options.imageUrl || imgElement.src);
+        animateDiv(newContainer, layers, options, options.imageUrl || imgElement.src);
     }
 
     // Animate each div element
@@ -405,11 +416,12 @@ const glitch = (elOrSelector: string | HTMLDivElement = '.powerglitch', userOpti
         if (! options.imageUrl) {
             throw new Error('Options.imageUrl must be set if there are div elements to glitch');
         }
-        animateDiv(divElement, layers, options.backgroundColor, options.imageUrl);
+        animateDiv(divElement, layers, options, options.imageUrl);
     }
 };
 
 export const PowerGlitch = {
     glitch,
+    generateLayers,
     getDefaultOptions,
 };

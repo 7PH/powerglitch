@@ -169,6 +169,7 @@ PowerGlitch.glitch(
     'div.glitch',
     {
         backgroundColor: 'transparent',
+        hideOverflow: true,
         timing: {
             duration: 1000,
             iterations: 15,
