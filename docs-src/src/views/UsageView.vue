@@ -168,6 +168,7 @@ PowerGlitch.glitch(image)
 PowerGlitch.glitch(
     'div.glitch',
     {
+        imageUrl: 'https://.../image.png',
         backgroundColor: 'transparent',
         hideOverflow: true,
         timing: {
@@ -204,6 +205,7 @@ PowerGlitch.glitch(
 PowerGlitch.glitch(
     'div.glitch',
     {
+        imageUrl: 'https://.../image.png',
         glitchTimeSpan: false,
         shake: false,
     }
