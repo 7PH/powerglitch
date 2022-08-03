@@ -404,8 +404,8 @@ const glitch = (elOrSelector: string | HTMLDivElement = '.powerglitch', userOpti
             throw new Error('Unable to glitch image, it is not attached to a parent element');
         }
         imgElement.parentElement.insertBefore(newContainer, imgElement);
-        // Keep but hide the image, to avoid breaking the original application
-        imgElement.style.display = 'none';
+        // Remove original image
+        imgElement.remove();
         // Animate the new container
         animateDiv(newContainer, layers, options, options.imageUrl || imgElement.src);
     }
