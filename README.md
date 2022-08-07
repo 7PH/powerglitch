@@ -46,6 +46,14 @@ Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/pla
 
 ## Useful links
 
+Documentation
 - Visually try out effects using the [demo](https://7ph.github.io/powerglitch/#/playground).
 - Lookup PowerGlitch [home page](https://7ph.github.io/powerglitch/).
 - For customization and optimization tips, check the [usage guide](https://7ph.github.io/powerglitch/#/usage).
+
+Plugins
+- Vue plugin [vue-powerglitch](https://github.com/7PH/powerglitch)
+
+## Contributing
+
+Having trouble? Found a bug? Want to contribute? Any kind of contribution is welcome. If you have any questions, please open an issue or create a pull request.
