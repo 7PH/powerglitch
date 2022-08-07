@@ -51,8 +51,8 @@ Documentation
 - Lookup PowerGlitch [home page](https://7ph.github.io/powerglitch/).
 - For customization and optimization tips, check the [usage guide](https://7ph.github.io/powerglitch/#/usage).
 
-Plugins
-- Vue plugin [vue-powerglitch](https://github.com/7PH/powerglitch)
+Integrations
+- Vue plugin [vue-powerglitch](https://github.com/7PH/vue-powerglitch)
 
 ## Contributing
 
