@@ -1,8 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAppStore } from '@/stores/app';
-import { PowerGlitch } from '../../../src/index.ts';
-import logo from '@/assets/logo.png';
 import ToggleGroupOption from '@/components/ToggleGroupOption.vue';
 import StringOption from '@/components/StringOption.vue';
 import SelectOption from '@/components/SelectOption.vue';
@@ -10,40 +8,10 @@ import BooleanOption from '@/components/BooleanOption.vue';
 import NumberOption from '@/components/NumberOption.vue';
 
 const appStore = useAppStore();
-
-const logoGlitch = ref(null);
-onMounted(() => {
-    PowerGlitch.glitch(
-        logoGlitch.value,
-        {
-            ...PowerGlitch.getDefaultOptions(),
-            imageUrl: logo,
-        }
-    );
-});
-
 </script>
 
 <template>
     <div class="px-4">
-        <div class="font-bold text-xl mb-4 flex">
-            <div class="grow flex gap-2">
-                <div
-                    ref="logoGlitch"
-                    style="width: 30px; height: 30px;"
-                /> PowerGlitch
-            </div>
-            <div>
-                <a
-                    title="Github"
-                    target="_blank"
-                    href="https://github.com/7PH/powerglitch"
-                >
-                    <fa icon="fa-brands fa-github" />
-                </a>
-            </div>
-        </div>
-
         <div class="font-bold mt-6 mb-2 pl-2">
             Global
         </div>

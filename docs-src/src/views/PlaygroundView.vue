@@ -1,6 +1,23 @@
 <script setup>
+import { ref, onMounted } from 'vue';
+import { PowerGlitch } from '../../../src/index.ts';
+import logo from '@/assets/logo.png';
 import OptionPanel from '@/components/OptionPanel.vue';
+import ExportPanel from '@/components/ExportPanel.vue';
 import ImagePreview from '@/components/ImagePreview.vue';
+
+const logoGlitch = ref(null);
+onMounted(() => {
+    PowerGlitch.glitch(
+        logoGlitch.value,
+        {
+            ...PowerGlitch.getDefaultOptions(),
+            imageUrl: logo,
+        }
+    );
+});
+
+const show = ref('options');
 </script>
 
 <template>
@@ -11,7 +28,41 @@ import ImagePreview from '@/components/ImagePreview.vue';
             </RouterLink>
         </p>
         <div class="option-panel border p-4 overflow-y-auto">
-            <OptionPanel />
+            <div class="font-bold text-xl mb-4 flex">
+                <div class="grow flex gap-2">
+                    <div
+                        ref="logoGlitch"
+                        style="width: 30px; height: 30px;"
+                    /> PowerGlitch
+                </div>
+                <div>
+                    <a
+                        title="Github"
+                        target="_blank"
+                        href="https://github.com/7PH/powerglitch"
+                    >
+                        <fa icon="fa-brands fa-github" />
+                    </a>
+                </div>
+            </div>
+            <template v-if="show === 'options'">
+                <OptionPanel />
+                <button
+                    class="mt-6 w-full"
+                    @click="show = 'export'"
+                >
+                    Show code
+                </button>
+            </template>
+            <template v-if="show === 'export'">
+                <ExportPanel />
+                <button
+                    class="mt-6 w-full"
+                    @click="show = 'options'"
+                >
+                    Back to options
+                </button>
+            </template>
         </div>
         <div class="grow flex flex-col bg-white">
             <div class="grow flex flex-col justify-center">
