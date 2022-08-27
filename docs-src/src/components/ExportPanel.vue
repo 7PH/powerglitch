@@ -19,8 +19,9 @@ const selectCode = () => {
         <p>Copy the options object below in your app</p>
         <pre
             ref="preRef"
+            class="bg-white p-4 rounded shadow overflow-auto"
             @click="selectCode"
-            v-text="appStore.powerGlitchOptions"
+            v-text="JSON.stringify(appStore.powerGlitchOptions, (key, value) => key === 'iterations' && value === Infinity ? undefined : value, 2)"
         />
     </div>
 </template>
