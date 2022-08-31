@@ -20,6 +20,12 @@ const appStore = useAppStore();
             class="mt-1"
             :title="'Image'"
         />
+        <SelectOption
+            v-model="appStore.powerGlitchOptions.playMode"
+            class="mt-1"
+            :title="'Activate'"
+            :values="['always', 'hover-triggered', 'hover-only']"
+        />
         <StringOption
             v-model="appStore.powerGlitchOptions.backgroundColor"
             class="mt-1"

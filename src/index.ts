@@ -9,6 +9,11 @@ type PowerGlitchOptions = {
     imageUrl?: string,
 
     /**
+     * When to glitch
+     */
+    playMode: 'always' | 'hover-triggered' | 'hover-only',
+
+    /**
      * Background color. Use 'transparent' not to set a background color.
      */
     backgroundColor: string,
@@ -135,6 +140,7 @@ type Rectangle = {
  * Get best-looking default options for most images.
  */
 const getDefaultOptions = (): PowerGlitchOptions => ({
+    playMode: 'always',
     backgroundColor: 'transparent',
     hideOverflow: false,
     timing: {
@@ -326,11 +332,35 @@ const animateDiv = (div: HTMLDivElement, layers: LayerDefinition[], options: Pow
         div.removeChild(div.firstChild);
     }
     // For each animation layer, clone template layer, tweak styles, and append to element
-    for (const layer of layers) {
+    for (let i = 0; i < layers.length; ++ i) {
         const layerDiv = templateLayer.cloneNode(false) as HTMLDivElement;
         layerDiv.style.backgroundImage = `url(${imageUrl})`;
-        layerDiv.animate(layer.steps, layer.timing);
         div.appendChild(layerDiv);
+    }
+    // Functions to control animation
+    const startAnimation = () => {
+        layers.forEach((layer, i) => div.children[i].animate(layer.steps, layer.timing));
+    };
+    const stopAnimation = () => {
+        layers.forEach((_, i) => div.children[i].getAnimations().map(animation => animation.cancel()));
+    };
+    switch (options.playMode) {
+        case 'always':
+            startAnimation();
+            div.onmouseenter = null;
+            div.onmouseleave = null;
+            break;
+        case 'hover-triggered':
+            div.onmouseenter = () => {
+                startAnimation();
+                div.onmouseenter = null;
+            };
+            div.onmouseleave = null;
+            break;
+        case 'hover-only':
+            div.onmouseenter = startAnimation;
+            div.onmouseleave = stopAnimation;
+            break;
     }
 };
 
