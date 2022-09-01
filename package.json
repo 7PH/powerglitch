@@ -16,7 +16,8 @@
         "test": "npm run lint && npm run size"
     },
     "files": [
-        "/lib"
+        "/lib",
+        "/dist"
     ],
     "devDependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.1.1",
