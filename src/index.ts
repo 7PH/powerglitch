@@ -1,4 +1,12 @@
 /**
+ * Available play modes
+ * `always`: Always play the glitch, like now (default)
+ * `hover-triggered`: Will start glitching indefinitely after first hover
+ * `hover-only`: Will start glitching when hovering, and stop glitching when leaving the image
+ */
+export type PlayModes = 'always' | 'hover-triggered' | 'hover-only';
+
+/**
  * Custom options for the glitch animations.
  */
 type PowerGlitchOptions = {
@@ -7,6 +15,11 @@ type PowerGlitchOptions = {
      * Image URL. Can be local, remote or a data URL. Needs to be set if glitching divs.
      */
     imageUrl?: string,
+
+    /**
+     * When to glitch
+     */
+    playMode: PlayModes,
 
     /**
      * Background color. Use 'transparent' not to set a background color.
@@ -134,30 +147,61 @@ type Rectangle = {
 /**
  * Get best-looking default options for most images.
  */
-const getDefaultOptions = (): PowerGlitchOptions => ({
-    backgroundColor: 'transparent',
-    hideOverflow: false,
-    timing: {
-        duration: 2 * 1000,
-        iterations: Infinity,
-    },
-    glitchTimeSpan: {
-        start: 0.5,
-        end: 0.7,
-    },
-    shake: {
-        velocity: 15,
-        amplitudeX: 0.4,
-        amplitudeY: 0.4,
-    },
-    slice: {
-        count: 6,
-        velocity: 15,
-        minHeight: 0.02,
-        maxHeight: 0.15,
-        hueRotate: true,
-    },
-});
+const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions => {
+    if (playMode === 'always') {
+        return {
+            playMode,
+            backgroundColor: 'transparent',
+            hideOverflow: false,
+            timing: {
+                duration: 2 * 1000,
+                iterations: Infinity,
+            },
+            glitchTimeSpan: {
+                start: 0.5,
+                end: 0.7,
+            },
+            shake: {
+                velocity: 15,
+                amplitudeX: 0.4,
+                amplitudeY: 0.4,
+            },
+            slice: {
+                count: 6,
+                velocity: 15,
+                minHeight: 0.02,
+                maxHeight: 0.15,
+                hueRotate: true,
+            },
+        };
+    } else {
+        return {
+            playMode,
+            backgroundColor: 'transparent',
+            hideOverflow: false,
+            timing: {
+                duration: 150,
+                iterations: 1,
+            },
+            glitchTimeSpan: {
+                start: 0,
+                end: 1,
+            },
+            shake: {
+                velocity: 15,
+                amplitudeX: 0.05,
+                amplitudeY: 0.05,
+            },
+            slice: {
+                count: 6,
+                velocity: 15,
+                minHeight: 0.02,
+                maxHeight: 0.15,
+                hueRotate: true,
+            },
+        };
+    }
+};
 
 
 /**
@@ -226,7 +270,6 @@ const getRectanglePolygonCss = ({ top, left, height, width }: Rectangle) => {
  */
 const getDefaultTimingCss = (stepCount: number) => {
     return {
-        ...getDefaultOptions().timing,
         easing: `steps(${stepCount}, jump-start)`,
     };
 };
@@ -326,11 +369,35 @@ const animateDiv = (div: HTMLDivElement, layers: LayerDefinition[], options: Pow
         div.removeChild(div.firstChild);
     }
     // For each animation layer, clone template layer, tweak styles, and append to element
-    for (const layer of layers) {
+    for (let i = 0; i < layers.length; ++ i) {
         const layerDiv = templateLayer.cloneNode(false) as HTMLDivElement;
         layerDiv.style.backgroundImage = `url(${imageUrl})`;
-        layerDiv.animate(layer.steps, layer.timing);
         div.appendChild(layerDiv);
+    }
+    // Functions to control animation
+    const startAnimation = () => {
+        layers.forEach((layer, i) => div.children[i].animate(layer.steps, layer.timing));
+    };
+    const stopAnimation = () => {
+        layers.forEach((_, i) => div.children[i].getAnimations().map(animation => animation.cancel()));
+    };
+    switch (options.playMode) {
+        case 'always':
+            startAnimation();
+            div.onmouseenter = null;
+            div.onmouseleave = null;
+            break;
+        case 'hover-triggered':
+            div.onmouseenter = () => {
+                startAnimation();
+                div.onmouseenter = null;
+            };
+            div.onmouseleave = null;
+            break;
+        case 'hover-only':
+            div.onmouseenter = startAnimation;
+            div.onmouseleave = stopAnimation;
+            break;
     }
 };
 
@@ -374,7 +441,7 @@ function mergeDeep(...objects: readonly any[]): any {
  */
 const glitch = (elOrSelector: string | HTMLDivElement = '.powerglitch', userOptions: Partial<PowerGlitchOptions> = {}) => {
     // Fix options with defaults
-    const options: PowerGlitchOptions = mergeDeep(getDefaultOptions(), userOptions);
+    const options: PowerGlitchOptions = mergeDeep(getDefaultOptions(userOptions.playMode), userOptions);
 
     // Find elements to glitch
     let elements: (HTMLDivElement | HTMLImageElement)[] = [];

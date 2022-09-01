@@ -169,6 +169,7 @@ PowerGlitch.glitch(
     'div.glitch',
     {
         imageUrl: 'https://.../image.png',
+        playMode: 'always',
         backgroundColor: 'transparent',
         hideOverflow: true,
         timing: {

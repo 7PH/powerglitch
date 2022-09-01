@@ -11,7 +11,7 @@ onMounted(() => {
     PowerGlitch.glitch(
         logoGlitch.value,
         {
-            ...PowerGlitch.getDefaultOptions(),
+            ...PowerGlitch.getDefaultOptions('always'),
             imageUrl: logo,
         }
     );

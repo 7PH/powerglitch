@@ -16,7 +16,7 @@ const rebuild = () => {
 
 // Rebuild when mounted or options changed
 onMounted(rebuild);
-watch(rebuild);
+watch(appStore.powerGlitchOptions, rebuild);
 </script>
 
 <template>

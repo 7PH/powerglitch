@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { PowerGlitch } from '../../../src/index.ts';
 import { useAppStore } from '@/stores/app';
 import ToggleGroupOption from '@/components/ToggleGroupOption.vue';
 import StringOption from '@/components/StringOption.vue';
@@ -8,10 +9,33 @@ import BooleanOption from '@/components/BooleanOption.vue';
 import NumberOption from '@/components/NumberOption.vue';
 
 const appStore = useAppStore();
+
+const setFullDefaults = (playMode) => {
+    const defaults = PowerGlitch.getDefaultOptions(playMode);
+    appStore.powerGlitchOptions.playMode = playMode;
+    appStore.powerGlitchOptions.timing = defaults.timing;
+    appStore.powerGlitchOptions.glitchTimeSpan = defaults.glitchTimeSpan;
+    appStore.powerGlitchOptions.shake = defaults.shake;
+    appStore.powerGlitchOptions.slice = defaults.slice;
+};
 </script>
 
 <template>
     <div class="px-4">
+        <div class="font-bold mt-6 mb-2 pl-2">
+            Recommended defaults
+        </div>
+        <div class="ml-4 flex flex-wrap justify-center gap-2">
+            <button @click="setFullDefaults('always')">
+                Infinite
+            </button>
+            <button @click="setFullDefaults('hover-triggered')">
+                Once on hover
+            </button>
+            <button @click="setFullDefaults('hover-only')">
+                Always on hover
+            </button>
+        </div>
         <div class="font-bold mt-6 mb-2 pl-2">
             Global
         </div>
@@ -19,6 +43,12 @@ const appStore = useAppStore();
             v-model="appStore.powerGlitchOptions.imageUrl"
             class="mt-1"
             :title="'Image'"
+        />
+        <SelectOption
+            v-model="appStore.powerGlitchOptions.playMode"
+            class="mt-1"
+            :title="'Activate'"
+            :values="['always', 'hover-triggered', 'hover-only']"
         />
         <StringOption
             v-model="appStore.powerGlitchOptions.backgroundColor"
@@ -81,7 +111,7 @@ const appStore = useAppStore();
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.glitchTimeSpan"
             :title="'Enabled'"
-            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions().glitchTimeSpan : false"
+            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions(appStore.powerGlitchOptions.playMode).glitchTimeSpan : false"
         />
         <template v-if="appStore.powerGlitchOptions.glitchTimeSpan">
             <NumberOption
@@ -110,7 +140,7 @@ const appStore = useAppStore();
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.shake"
             :title="'Enabled'"
-            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions().shake : false"
+            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions(appStore.powerGlitchOptions.playMode).shake : false"
         />
         <template v-if="appStore.powerGlitchOptions.shake">
             <NumberOption
@@ -147,7 +177,7 @@ const appStore = useAppStore();
         <ToggleGroupOption
             v-model="appStore.powerGlitchOptions.slice"
             :title="'Enabled'"
-            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions().slice : false"
+            :getDefaultValue="v => v ? PowerGlitch.getDefaultOptions(appStore.powerGlitchOptions.playMode).slice : false"
         />
         <template v-if="appStore.powerGlitchOptions.slice">
             <NumberOption

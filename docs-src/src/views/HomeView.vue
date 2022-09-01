@@ -102,7 +102,7 @@ onMounted(() => {
             ❓ Introduction
         </h1>
         <p class="mt-4">
-            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed. It weights around <b>1.8kb</b> minified and gzipped and <b>4kb</b> minified.<br>
+            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed. It weights less than <b>2kb</b> minified and gzipped.<br>
             <br>
             What are you waiting for? 
             <RouterLink
