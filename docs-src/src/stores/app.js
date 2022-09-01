@@ -10,7 +10,7 @@ export const useAppStore = defineStore('main', {
          * Default options for Power Glitch
          */
         powerGlitchOptions: {
-            ...PowerGlitch.getDefaultOptions(),
+            ...PowerGlitch.getDefaultOptions('always'),
             imageUrl: defaultImage,
         },
     }),
