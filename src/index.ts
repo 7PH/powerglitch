@@ -1,8 +1,8 @@
 /**
  * Available play modes
- * `always`: Always play the glitch, like now (default)
- * `hover-triggered`: Will start glitching indefinitely after first hover
- * `hover-only`: Will start glitching when hovering, and stop glitching when leaving the image
+ * `always`: Always glitch (default)
+ * `hover-triggered`: Glitch indefinitely after first image hover
+ * `hover-only`: Start gitch when hovering, and stop when leaving the image
  */
 export type PlayModes = 'always' | 'hover-triggered' | 'hover-only';
 
@@ -17,7 +17,7 @@ type PowerGlitchOptions = {
     imageUrl?: string,
 
     /**
-     * When to glitch
+     * Play mode. Refer to PlayModes type definition for more information.
      */
     playMode: PlayModes,
 
