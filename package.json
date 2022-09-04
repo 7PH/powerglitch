@@ -4,7 +4,7 @@
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "scripts": {
-        "dev:docs": "vite",
+        "dev": "vite",
         "build:docs": "vite build --emptyOutDir",
         "build:lib": "tsc",
         "build:dist": "rm -rf dist; rollup -c",
