@@ -163,7 +163,7 @@ onMounted(() => {
         <h2 class="text-center font-bold">
             Fixed animation
         </h2>
-        <div class="justify-center grid grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+        <div class="justify-center grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="mx-auto flex flex-col">
                 <div
                     ref="glitchExample1"
@@ -206,7 +206,7 @@ onMounted(() => {
         <h2 class="text-center font-bold mt-8">
             Hover to glich
         </h2>
-        <div class="mt-6 justify-center grid grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+        <div class="mt-6 justify-center grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="mx-auto flex flex-col">
                 <div
                     ref="glitchExample5"
