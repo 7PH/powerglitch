@@ -6,7 +6,7 @@ import { PowerGlitch } from '../../../src/index.ts';
 // Glitch logo
 const logoGlitch = ref(null);
 onMounted(() => {
-    PowerGlitch.glitch(logoGlitch.value, { imageUrl: logo });
+    PowerGlitch.glitch(logoGlitch.value);
 });
 </script>
 
@@ -24,10 +24,12 @@ onMounted(() => {
 
         <!-- Title -->
         <div class="mt-8 font-bold text-5xl flex gap-4 justify-center">
-            <div
+            <img
                 ref="logoGlitch"
+                :src="logo"
+                alt="logo"
                 style="width: 60px; height: 60px;"
-            />
+            >
             <div class="mt-1">
                 PowerGlitch
             </div>
@@ -75,25 +77,15 @@ onMounted(() => {
             🟣 Glitching {{ '<div>' }}
         </h1>
         <p class="mt-2">
-            The most optimized way to use PowerGlitch is to first create a placeholder div
+            First, create a placeholder div with the content to glitch inside
         </p>
         <highlightjs
             class="rounded-xl overflow-hidden mt-2"
             language="html"
-            :code="`<div class='glitch'></div>`"
-        />
-        <p class="mt-2">
-            ensure the div has a non-zero width/height
-        </p>
-        <highlightjs
-            class="rounded-xl overflow-hidden mt-2"
-            language="css"
             :code="`
-.glitch {
-    width: 80px;
-    height: 80px;
-}
-`.trim()"
+<div class='glitch'>
+    <p>Glitch</p>
+</div>`.trim()"
         />
         <p class="mt-2">
             then use PowerGlitch.glitch() to populate the div with the glitched image
@@ -102,39 +94,11 @@ onMounted(() => {
             class="rounded-xl overflow-hidden mt-2"
             language="js"
             :code="`
-PowerGlitch.glitch('div.glitch', {
-    imageUrl: 'https://.../image.png'
-})
+PowerGlitch.glitch('div.glitch')
 `.trim()"
         />
         <p class="mt-2">
             this takes care of animating the placeholder with the glitch effect.
-        </p>
-
-        <!-- Glitching <img> -->
-        <h1 class="font-bold mt-8">
-            🔵 Glitching {{ '<img>' }}
-        </h1>
-        <p class="mt-2">
-            It is also possible to glitch images directly
-        </p>
-        <highlightjs
-            class="rounded-xl overflow-hidden mt-2"
-            language="html"
-            :code="`<img src='https://.../image.png' class='glitch' />`"
-        />
-        <p class="mt-2">
-            for images, call PowerGlitch.glitch() without specifying the imageUrl
-        </p>
-        <highlightjs
-            class="rounded-xl overflow-hidden mt-2"
-            language="js"
-            :code="`
-PowerGlitch.glitch('img.glitch')
-`.trim()"
-        />
-        <p class="mt-2">
-            this replaces the image with its glitched version.
         </p>
 
         <!-- By reference -->
@@ -168,9 +132,7 @@ PowerGlitch.glitch(image)
 PowerGlitch.glitch(
     'div.glitch',
     {
-        imageUrl: 'https://.../image.png',
         playMode: 'always',
-        backgroundColor: 'transparent',
         hideOverflow: true,
         timing: {
             duration: 1000,
@@ -206,7 +168,6 @@ PowerGlitch.glitch(
 PowerGlitch.glitch(
     'div.glitch',
     {
-        imageUrl: 'https://.../image.png',
         glitchTimeSpan: false,
         shake: false,
     }

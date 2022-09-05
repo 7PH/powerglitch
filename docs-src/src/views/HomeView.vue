@@ -18,12 +18,12 @@ const glitchExample7 = ref(null);
 const glitchExample8 = ref(null);
 onMounted(() => {
     PowerGlitch.glitch(glitchExample1.value, {
-        imageUrl: exampleFrog,
+        html: `<img src="${exampleFrog}" />`,
         shake: false,
         slice: false,
     });
     PowerGlitch.glitch(glitchExample2.value, {
-        imageUrl: exampleFrog,
+        html: `<img src="${exampleFrog}" />`,
         shake: false,
         glitchTimeSpan: {
             start: 0.2,
@@ -35,22 +35,22 @@ onMounted(() => {
         },
     });
     PowerGlitch.glitch(glitchExample3.value, {
-        imageUrl: exampleFrog,
+        html: `<img src="${exampleFrog}" />`,
     });
     PowerGlitch.glitch(glitchExample4.value, {
-        imageUrl: exampleFrog,
+        html: `<img src="${exampleFrog}" />`,
         glitchTimeSpan: {
             start: 0.2,
             end: 0.8,
         },
     });
     PowerGlitch.glitch(glitchExample5.value, {
-        imageUrl: logo,
-        playMode: 'hover-only',
+        html: `<img src="${logo}" />`,
+        playMode: 'hover',
     });
     PowerGlitch.glitch(glitchExample6.value, {
-        imageUrl: logo,
-        playMode: 'hover-only',
+        html: `<img src="${logo}" />`,
+        playMode: 'hover',
         timing: {
             duration: 1500,
         },
@@ -60,16 +60,16 @@ onMounted(() => {
         },
     });
     PowerGlitch.glitch(glitchExample7.value, {
-        imageUrl: logo,
-        playMode: 'hover-only',
+        html: `<img src="${logo}" />`,
+        playMode: 'hover',
         timing: {
             duration: 400,
             easing: 'ease-in-out',
         },
     });
     PowerGlitch.glitch(glitchExample8.value, {
-        imageUrl: logo,
-        playMode: 'hover-only',
+        html: `<img src="${logo}" />`,
+        playMode: 'hover',
         timing: {
             duration: 1000,
         },
@@ -103,6 +103,7 @@ onMounted(() => {
             <img
                 :src="logo"
                 class="powerglitch"
+                alt="logo"
                 style="width: 60px; height: 60px;"
             >
             <div class="mt-1">
@@ -314,10 +315,6 @@ PowerGlitch.glitch('.some-image')
 <style scoped>
 .app {
     max-width: 600px;
-}
-.example-frog {
-    width: 120px;
-    height: 120px;
 }
 .example-logo {
     width: 80px;

@@ -10,10 +10,7 @@ const logoGlitch = ref(null);
 onMounted(() => {
     PowerGlitch.glitch(
         logoGlitch.value,
-        {
-            ...PowerGlitch.getDefaultOptions('always'),
-            imageUrl: logo,
-        }
+        PowerGlitch.getDefaultOptions('always'),
     );
 });
 
@@ -30,10 +27,13 @@ const show = ref('options');
         <div class="option-panel border p-4 overflow-y-auto">
             <div class="font-bold text-xl mb-4 flex">
                 <div class="grow flex gap-2">
-                    <div
+                    <img
                         ref="logoGlitch"
+                        :src="logo"
+                        alt="logo"
                         style="width: 30px; height: 30px;"
-                    /> PowerGlitch
+                    >
+                    PowerGlitch
                 </div>
                 <div>
                     <a

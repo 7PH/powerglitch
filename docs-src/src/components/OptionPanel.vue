@@ -29,31 +29,21 @@ const setFullDefaults = (playMode) => {
             <button @click="setFullDefaults('always')">
                 Infinite
             </button>
-            <button @click="setFullDefaults('hover-triggered')">
-                Once on hover
+            <button @click="setFullDefaults('hover')">
+                On hover
             </button>
-            <button @click="setFullDefaults('hover-only')">
-                Always on hover
+            <button @click="setFullDefaults('click')">
+                On click
             </button>
         </div>
         <div class="font-bold mt-6 mb-2 pl-2">
             Global
         </div>
-        <StringOption
-            v-model="appStore.powerGlitchOptions.imageUrl"
-            class="mt-1"
-            :title="'Image'"
-        />
         <SelectOption
             v-model="appStore.powerGlitchOptions.playMode"
             class="mt-1"
             :title="'Activate'"
-            :values="['always', 'hover-triggered', 'hover-only']"
-        />
-        <StringOption
-            v-model="appStore.powerGlitchOptions.backgroundColor"
-            class="mt-1"
-            :title="'Background color'"
+            :values="['always', 'hover', 'click']"
         />
         <BooleanOption
             v-model="appStore.powerGlitchOptions.hideOverflow"
