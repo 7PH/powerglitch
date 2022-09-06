@@ -1,6 +1,6 @@
 <img src="./assets/intro.gif">
 
-PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed. It weights less than 2kb minified and gzipped.<br>
+PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on any HTML element, without using canvas. It weights less than 2kb minified and gzipped.<br>
 
 Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/playground) 😊
 
@@ -16,14 +16,25 @@ Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/pla
     # or
     yarn add powerglitch
     ```
-    or by saving the web bundle in [dist/powerglitch.min.js](./dist/powerglitch.min.js) and importing it using a script tag
+    or by [saving the web bundle](https://unpkg.com/powerglitch@latest/dist/powerglitch.min.js) and importing it using a script tag
     ```html
-    <script src="./path/to/your/powerglitch.min.js"></script>
+    <script src="https://unpkg.com/powerglitch@latest/dist/powerglitch.min.js"></script>
     ```
 
-2. Find an image to glitch
+2. Find an element to glitch
     ```html
+    <!-- Image -->
     <img src='https://.../image.png' class='glitch' />
+
+    <!-- Button -->
+    <button class='glitch'>
+        click me 🤷‍♂️
+    </button>
+
+    <!-- Any DOM element -->
+    <div class='glitch'>
+        <p>Hello <b>World</b></p>
+    </div>
     ```
 
 3. Import PowerGlitch using ES6 import
@@ -36,12 +47,12 @@ Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/pla
     ```
     if you are importing PowerGlitch using a `script` tag, the `PowerGlitch` global variable is automatically available.
 
-4. Glitch the image
+4. Glitch the element
     ```javascript
-    PowerGlitch.glitch('img.glitch')
+    PowerGlitch.glitch('.glitch')
     ```
 
-5. That's it, your image is glitched!
+5. That's it, your element is glitched!
 6. For customization and optimization tips, check-out the [usage guide](https://7ph.github.io/powerglitch/#/usage).
 
 ## Useful links

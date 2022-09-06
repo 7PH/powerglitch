@@ -12,6 +12,7 @@ const rebuild = () => {
     if (! container.value) {
         return;
     }
+    console.log('rebuilding');
     PowerGlitch.glitch(container.value, appStore.powerGlitchOptions);
 };
 
@@ -22,6 +23,6 @@ watch(appStore.powerGlitchOptions, rebuild);
 
 <template>
     <div>
-        <img ref="container" :src="defaultImage">
+        <div ref="container" />
     </div>
 </template>
