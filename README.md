@@ -1,6 +1,6 @@
 <img src="./assets/intro.gif">
 
-PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on any HTML element, without using canvas. It weights less than 2kb minified and gzipped.<br>
+PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to glitch anything on the web, without using a canvas. It weights less than 2kb minified and gzipped.<br>
 
 Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/playground) 😊
 

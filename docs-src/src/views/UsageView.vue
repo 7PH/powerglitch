@@ -43,7 +43,7 @@ onMounted(() => {
             :code="`<button class='glitch'>Glitch</button>`.trim()"
         />
         <p class="mt-2">
-            or any DOM element, that may contain others
+            or any DOM element
         </p>
         <highlightjs
             class="rounded-xl overflow-hidden mt-2"
@@ -54,7 +54,7 @@ onMounted(() => {
 </div>`.trim()"
         />
         <p class="mt-2">
-            then, use PowerGlitch.glitch() to glitch the element
+            then, use <span class="font-bold">PowerGlitch.glitch()</span> to glitch the element
         </p>
         <highlightjs
             class="rounded-xl overflow-hidden mt-2"
@@ -75,7 +75,7 @@ PowerGlitch.glitch('.glitch')
             code="<div class='glitch'></div>"
         />
         <p class="mt-2">
-            and specify the html option to populate its innerHTML property
+            and specify the <span class="font-bold">html</span> option to populate its innerHTML property
         </p>
         <highlightjs
             class="rounded-xl overflow-hidden mt-2"
@@ -111,8 +111,8 @@ PowerGlitch.glitch(element)
             🟢 Customize
         </h1>
         <p class="mt-2">
-            By default, PowerGlitch will glitch elements using a set of hardcoded default options that look good for most cases.
-            However, you can customize the applied glitch by passing a custom options object as the second argument to PowerGlitch.glitch().
+            By default, PowerGlitch glitch elements using default options that look good for most cases.
+            To customize the glitch, pass a custom options object as the second argument to <span class="font-bold">PowerGlitch.glitch()</span>.
         </p>
         <highlightjs
             class="rounded-xl overflow-hidden mt-2"
@@ -126,6 +126,7 @@ PowerGlitch.glitch(
         timing: {
             duration: 1000,
             iterations: 15,
+            easing: 'ease-in-out',
         },
         glitchTimeSpan: {
             start: 0.4,
@@ -155,7 +156,7 @@ PowerGlitch.glitch(
             language="js"
             :code="`
 PowerGlitch.glitch(
-    'div.glitch',
+    '.glitch',
     {
         glitchTimeSpan: false,
         shake: false,
