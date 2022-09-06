@@ -147,7 +147,7 @@ const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions =
     return {
         playMode,
         hideOverflow: false,
-        timing: playMode === 'always' ? { duration: 2 * 1000, iterations: Infinity } : { duration: 150, iterations: 1 },
+        timing: playMode === 'always' ? { duration: 2 * 1000, iterations: Infinity } : { duration: 250, iterations: 1 },
         glitchTimeSpan: playMode === 'always' ? { start: 0.5, end: 0.7 } : { start: 0, end: 1, },
         shake: {
             velocity: 15,
@@ -425,12 +425,16 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     element.dataset.glitched = '1';
 };
 
+type RecursivePartial<T> = {
+    [P in keyof T]?: RecursivePartial<T[P]>;
+};
+
 /**
  * Make a single element glitch.
  * @param elOrSelector Element or selector to glitch.
  * @param userOptions Options for the glitch.
  */
-const glitch = (elOrSelector: string | HTMLDivElement | NodeList | Array<HTMLDivElement> = '.powerglitch', userOptions: Partial<PowerGlitchOptions> = {}) => {
+const glitch = (elOrSelector: string | HTMLElement | NodeList | Array<HTMLDivElement> = '.powerglitch', userOptions: RecursivePartial<PowerGlitchOptions> = {}) => {
     // Fix options with defaults
     const options: PowerGlitchOptions = mergeDeep(getDefaultOptions(userOptions.playMode), userOptions);
 
