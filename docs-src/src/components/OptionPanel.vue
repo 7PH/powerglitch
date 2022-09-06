@@ -3,21 +3,11 @@ import { ref, onMounted } from 'vue';
 import { PowerGlitch } from '../../../src/index.ts';
 import { useAppStore } from '@/stores/app';
 import ToggleGroupOption from '@/components/ToggleGroupOption.vue';
-import StringOption from '@/components/StringOption.vue';
 import SelectOption from '@/components/SelectOption.vue';
 import BooleanOption from '@/components/BooleanOption.vue';
 import NumberOption from '@/components/NumberOption.vue';
 
 const appStore = useAppStore();
-
-const setFullDefaults = (playMode) => {
-    const defaults = PowerGlitch.getDefaultOptions(playMode);
-    appStore.powerGlitchOptions.playMode = playMode;
-    appStore.powerGlitchOptions.timing = defaults.timing;
-    appStore.powerGlitchOptions.glitchTimeSpan = defaults.glitchTimeSpan;
-    appStore.powerGlitchOptions.shake = defaults.shake;
-    appStore.powerGlitchOptions.slice = defaults.slice;
-};
 </script>
 
 <template>
@@ -26,34 +16,30 @@ const setFullDefaults = (playMode) => {
             Recommended defaults
         </div>
         <div class="ml-4 flex flex-wrap justify-center gap-2">
-            <button @click="setFullDefaults('always')">
+            <button @click="appStore.setPlayModeDefaults('always')">
                 Infinite
             </button>
-            <button @click="setFullDefaults('hover-triggered')">
-                Once on hover
+            <button @click="appStore.setPlayModeDefaults('hover')">
+                On hover
             </button>
-            <button @click="setFullDefaults('hover-only')">
-                Always on hover
+            <button @click="appStore.setPlayModeDefaults('click')">
+                On click
             </button>
         </div>
         <div class="font-bold mt-6 mb-2 pl-2">
-            Global
+            General
         </div>
-        <StringOption
-            v-model="appStore.powerGlitchOptions.imageUrl"
+        <SelectOption
+            v-model="appStore.powerGlitchOptions.html"
             class="mt-1"
-            :title="'Image'"
+            :title="'HTML'"
+            :values="Object.values(appStore.htmlElements)"
         />
         <SelectOption
             v-model="appStore.powerGlitchOptions.playMode"
             class="mt-1"
-            :title="'Activate'"
-            :values="['always', 'hover-triggered', 'hover-only']"
-        />
-        <StringOption
-            v-model="appStore.powerGlitchOptions.backgroundColor"
-            class="mt-1"
-            :title="'Background color'"
+            :title="'Play mode'"
+            :values="['always', 'hover', 'click']"
         />
         <BooleanOption
             v-model="appStore.powerGlitchOptions.hideOverflow"

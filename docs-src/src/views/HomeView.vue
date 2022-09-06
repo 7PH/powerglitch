@@ -3,9 +3,7 @@ import { ref, onMounted } from 'vue';
 import logo from '@/assets/default.png';
 import exampleFrog from '@/assets/example-frog.gif';
 import { PowerGlitch } from '../../../src/index.ts';
-
-// Glitch logo
-onMounted(() => PowerGlitch.glitch());
+import AppHeader from './AppHeader.vue';
 
 // Glitch example frog
 const glitchExample1 = ref(null);
@@ -16,14 +14,16 @@ const glitchExample5 = ref(null);
 const glitchExample6 = ref(null);
 const glitchExample7 = ref(null);
 const glitchExample8 = ref(null);
+const glitchExample9 = ref(null);
+const glitchExample10 = ref(null);
 onMounted(() => {
     PowerGlitch.glitch(glitchExample1.value, {
-        imageUrl: exampleFrog,
+        html: `<img src="${exampleFrog}" />`,
         shake: false,
         slice: false,
     });
     PowerGlitch.glitch(glitchExample2.value, {
-        imageUrl: exampleFrog,
+        html: `<img src="${exampleFrog}" />`,
         shake: false,
         glitchTimeSpan: {
             start: 0.2,
@@ -35,22 +35,22 @@ onMounted(() => {
         },
     });
     PowerGlitch.glitch(glitchExample3.value, {
-        imageUrl: exampleFrog,
+        html: `<img src="${exampleFrog}" />`,
     });
     PowerGlitch.glitch(glitchExample4.value, {
-        imageUrl: exampleFrog,
+        html: `<img src="${exampleFrog}" />`,
         glitchTimeSpan: {
             start: 0.2,
             end: 0.8,
         },
     });
     PowerGlitch.glitch(glitchExample5.value, {
-        imageUrl: logo,
-        playMode: 'hover-only',
+        html: `<img src="${logo}" />`,
+        playMode: 'hover',
     });
     PowerGlitch.glitch(glitchExample6.value, {
-        imageUrl: logo,
-        playMode: 'hover-only',
+        html: `<img src="${logo}" />`,
+        playMode: 'hover',
         timing: {
             duration: 1500,
         },
@@ -60,16 +60,16 @@ onMounted(() => {
         },
     });
     PowerGlitch.glitch(glitchExample7.value, {
-        imageUrl: logo,
-        playMode: 'hover-only',
+        html: `<img src="${logo}" />`,
+        playMode: 'hover',
         timing: {
             duration: 400,
             easing: 'ease-in-out',
         },
     });
     PowerGlitch.glitch(glitchExample8.value, {
-        imageUrl: logo,
-        playMode: 'hover-only',
+        html: `<img src="${logo}" />`,
+        playMode: 'hover',
         timing: {
             duration: 1000,
         },
@@ -83,69 +83,50 @@ onMounted(() => {
             velocity: 5,
         },
     });
+    PowerGlitch.glitch(glitchExample9.value, {
+        html: '<button>click me 🤷‍♀️</button>',
+        playMode: 'click',
+        hideOverflow: true,
+        timing: {
+            duration: 250,
+            iterations: 1,
+            easing: 'ease-in-out',
+        },
+        slice: {
+            count: 15,
+            velocity: 20,
+        },
+    });
+    PowerGlitch.glitch(glitchExample10.value, {
+        html: `
+            <div class="border border-2 rounded shadow">
+                <p>
+                    Power <b>Glitch</b> 🌎
+                </p>
+                <button class="my-2">
+                    ✋
+                </button> Click somwehere
+            </div>
+        `,
+        playMode: 'click',
+        timing: {
+            duration: 1000,
+            easing: 'ease-in-out',
+        },
+    });
 });
 </script>
 
 <template>
     <div class="app w-full mx-auto mb-8 mt-16 md:mt-8 px-4">
-        <!-- GitHub -->
-        <p class="fixed right-0 top-0 mx-6 my-4 text-4xl">
-            <a
-                href="https://github.com/7ph/powerglitch"
-                target="_blank"
-            >
-                <fa icon="fa-brands fa-github" />
-            </a>
-        </p>
-
-        <!-- Title -->
-        <div class="mt-8 font-bold text-5xl flex gap-4 justify-center">
-            <img
-                :src="logo"
-                class="powerglitch"
-                style="width: 60px; height: 60px;"
-            >
-            <div class="mt-1">
-                PowerGlitch
-            </div>
-        </div>
-        <p class="text-center mt-4 text-lg">
-            A tiny library to glitch images on the web.
-        </p>
-        <div class="mt-2 flex justify-center gap-4">
-            <RouterLink
-                to="/"
-                class=""
-            >
-                home
-            </RouterLink>
-            <RouterLink
-                to="/usage"
-                class="underline"
-            >
-                usage
-            </RouterLink>
-            <RouterLink
-                to="/playground"
-                class="underline"
-            >
-                playground
-            </RouterLink>
-            <a
-                target="_blank"
-                href="https://github.com/7PH/powerglitch"
-                class="underline"
-            >
-                github
-            </a>
-        </div>
+        <AppHeader />
 
         <!-- Introduction -->
         <h1 class="font-bold mt-8">
             ❓ Introduction
         </h1>
         <p class="mt-4">
-            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to create a glitch effect on images. No canvas or DOM manipulations are needed. It weights less than <b>2kb</b> minified and gzipped.<br>
+            PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to glitch anything on the web, without using a canvas. It weights less than <b>2kb</b> minified and gzipped.<br>
             <br>
             What are you waiting for? 
             <RouterLink
@@ -157,12 +138,9 @@ onMounted(() => {
         </p>
 
         <!-- Demo 1 -->
-        <h1 class="font-bold mt-8">
-            🤔 Examples
+        <h1 class="font-bold mt-8 mb-2">
+            ▶ Fixed animation
         </h1>
-        <h2 class="text-center font-bold">
-            Fixed animation
-        </h2>
         <div class="justify-center grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="mx-auto flex flex-col">
                 <div
@@ -203,16 +181,16 @@ onMounted(() => {
         </div>
 
         <!-- Demo 2 -->
-        <h2 class="text-center font-bold mt-8">
-            Hover to glich
-        </h2>
-        <div class="mt-6 justify-center grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <h1 class="font-bold mt-8 mb-2">
+            ▶ Glitch on hover
+        </h1>
+        <div class="justify-center grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="mx-auto flex flex-col">
                 <div
                     ref="glitchExample5"
                     class="example-logo"
                 />
-                <p class="font-thin mt-2">
+                <p class="font-thin">
                     Quick
                 </p>
             </div>
@@ -221,7 +199,7 @@ onMounted(() => {
                     ref="glitchExample6"
                     class="example-logo"
                 />
-                <p class="font-thin mt-2">
+                <p class="font-thin">
                     Long
                 </p>
             </div>
@@ -230,7 +208,7 @@ onMounted(() => {
                     ref="glitchExample7"
                     class="example-logo"
                 />
-                <p class="font-thin mt-2">
+                <p class="font-thin">
                     Smooth
                 </p>
             </div>
@@ -239,8 +217,33 @@ onMounted(() => {
                     ref="glitchExample8"
                     class="example-logo"
                 />
-                <p class="font-thin mt-2">
+                <p class="font-thin">
                     Laggy
+                </p>
+            </div>
+        </div>
+
+        <!-- Demo 3 -->
+        <h1 class="font-bold mt-8 mb-2">
+            ▶ Glitch on click
+        </h1>
+        <div class="justify-center grid grid-cols-2 gap-4 text-center">
+            <div class="mx-auto flex flex-col pt-7">
+                <div
+                    ref="glitchExample9"
+                    class="example-button"
+                />
+                <p class="font-thin mt-6">
+                    Button glitch on click
+                </p>
+            </div>
+            <div class="mx-auto flex flex-col">
+                <div
+                    ref="glitchExample10"
+                    class="example-complex"
+                />
+                <p class="font-thin mt-2">
+                    Glitching complex element
                 </p>
             </div>
         </div>
@@ -279,12 +282,12 @@ $ yarn add powerglitch
             :code="`
 import { PowerGlitch } from 'powerglitch'
 
-// Glitch images with class 'some-image'
-PowerGlitch.glitch('.some-image')
+// Glitch elements with class 'some-element'
+PowerGlitch.glitch('.some-element')
 `.trim()"
         />
         <p class="mt-4">
-            To optimize and customize glitched images, check the 
+            To optimize and customize glitched elements, check the 
             <router-link
                 to="/usage"
                 class="underline"
@@ -315,11 +318,8 @@ PowerGlitch.glitch('.some-image')
 .app {
     max-width: 600px;
 }
+.example-logo,
 .example-frog {
-    width: 120px;
-    height: 120px;
-}
-.example-logo {
     width: 80px;
     height: 80px;
 }

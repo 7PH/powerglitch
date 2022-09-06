@@ -2,6 +2,7 @@
 import { ref, watch, onMounted } from 'vue';
 import { useAppStore } from '@/stores/app';
 import { PowerGlitch } from '../../../src/index';
+import defaultImage from '@/assets/default.png';
 
 const appStore = useAppStore();
 
@@ -11,6 +12,7 @@ const rebuild = () => {
     if (! container.value) {
         return;
     }
+    console.log('rebuilding');
     PowerGlitch.glitch(container.value, appStore.powerGlitchOptions);
 };
 
@@ -21,16 +23,6 @@ watch(appStore.powerGlitchOptions, rebuild);
 
 <template>
     <div>
-        <div
-            ref="container"
-            class="glitch"
-        />
+        <div ref="container" />
     </div>
 </template>
-
-<style scoped>
-.glitch {
-    width: 200px;
-    height: 200px;
-}
-</style>

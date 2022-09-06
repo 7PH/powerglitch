@@ -1,10 +1,10 @@
 /**
  * Available play modes
- * `always`: Always glitch (default)
- * `hover-triggered`: Glitch indefinitely after first image hover
- * `hover-only`: Start gitch when hovering, and stop when leaving the image
+ * always: Always glitch (default)
+ * hover: Glitch on hover
+ * click: Glitch will start on each click
  */
-export type PlayModes = 'always' | 'hover-triggered' | 'hover-only';
+export type PlayModes = 'always' | 'hover' | 'click';
 
 /**
  * Custom options for the glitch animations.
@@ -12,19 +12,15 @@ export type PlayModes = 'always' | 'hover-triggered' | 'hover-only';
 type PowerGlitchOptions = {
 
     /**
-     * Image URL. Can be local, remote or a data URL. Needs to be set if glitching divs.
+     * Html to glitch. If not provided, will use the elements themselves.
+     * If provided, all elements should have an `innerHTML` property.
      */
-    imageUrl?: string,
+    html?: string,
 
     /**
      * Play mode. Refer to PlayModes type definition for more information.
      */
     playMode: PlayModes,
-
-    /**
-     * Background color. Use 'transparent' not to set a background color.
-     */
-    backgroundColor: string,
 
     /**
      * Whether to hide the glitch animation when it goes out of the bounding rectangle.
@@ -93,7 +89,7 @@ type PowerGlitchOptions = {
     },
 
     /**
-     * Slice layers are the base animation to give the glitch effect. They clip a part of the image and move it somewhere else.
+     * Slice layers are the base animation to give the glitch effect. They clip a part of the element and move it somewhere else.
      * If not set to false, the slice layers will be generated.
      * The slice animation respects the glitch time span constraint, if set.
      */
@@ -145,62 +141,33 @@ type Rectangle = {
 };
 
 /**
- * Get best-looking default options for most images.
+ * Get best-looking default options for most elements.
  */
 const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions => {
-    if (playMode === 'always') {
-        return {
-            playMode,
-            backgroundColor: 'transparent',
-            hideOverflow: false,
-            timing: {
-                duration: 2 * 1000,
-                iterations: Infinity,
-            },
-            glitchTimeSpan: {
-                start: 0.5,
-                end: 0.7,
-            },
-            shake: {
-                velocity: 15,
-                amplitudeX: 0.4,
-                amplitudeY: 0.4,
-            },
-            slice: {
-                count: 6,
-                velocity: 15,
-                minHeight: 0.02,
-                maxHeight: 0.15,
-                hueRotate: true,
-            },
-        };
-    } else {
-        return {
-            playMode,
-            backgroundColor: 'transparent',
-            hideOverflow: false,
-            timing: {
-                duration: 150,
-                iterations: 1,
-            },
-            glitchTimeSpan: {
-                start: 0,
-                end: 1,
-            },
-            shake: {
-                velocity: 15,
-                amplitudeX: 0.05,
-                amplitudeY: 0.05,
-            },
-            slice: {
-                count: 6,
-                velocity: 15,
-                minHeight: 0.02,
-                maxHeight: 0.15,
-                hueRotate: true,
-            },
-        };
-    }
+    return {
+        playMode,
+        hideOverflow: false,
+        timing: playMode === 'always' ? { duration: 2 * 1000, iterations: Infinity } : { duration: 250, iterations: 1 },
+        glitchTimeSpan: playMode === 'always' ? { start: 0.5, end: 0.7 } : { start: 0, end: 1, },
+        shake: {
+            velocity: 15,
+            amplitudeX: 0.2,
+            amplitudeY: 0.2,
+        },
+        slice: playMode === 'click' ? {
+            count: 15,
+            velocity: 20,
+            minHeight: 0.02,
+            maxHeight: 0.15,
+            hueRotate: true,
+        } : {
+            count: 6,
+            velocity: 15,
+            minHeight: 0.02,
+            maxHeight: 0.15,
+            hueRotate: true,
+        },
+    };
 };
 
 
@@ -275,7 +242,7 @@ const getDefaultTimingCss = (stepCount: number) => {
 };
 
 /**
- * Generate a slice layer, slicing part of the image and moving it somwhere else.
+ * Generate a slice layer, slicing part of the element and moving it somwhere else.
  * @param options
  */
 const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
@@ -326,9 +293,9 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
  * @param options
  */
 const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
-    const layers = [];
-
-    layers.push(generateBaseLayer(options));
+    const layers = [
+        generateBaseLayer(options),
+    ];
 
     if (options.slice) {
         for (let i = 0; i < options.slice.count; ++ i) {
@@ -340,75 +307,13 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
 };
 
 /**
- * Animate a given div with a given set of layers, showing the specified image.
- * @param div 
- * @param layers 
- * @param options
- * @param imageUrl 
- */
-const animateDiv = (div: HTMLDivElement, layers: LayerDefinition[], options: PowerGlitchOptions, imageUrl: string) => {
-    const templateLayer = document.createElement('div');
-    templateLayer.classList.add('layer');
-    templateLayer.style.backgroundColor = options.backgroundColor;
-    templateLayer.style.backgroundRepeat = 'no-repeat';
-    templateLayer.style.backgroundPosition = 'center';
-    templateLayer.style.backgroundSize = 'contain';
-    templateLayer.style.width = '100%';
-    templateLayer.style.height = '100%';
-    templateLayer.style.top = '0';
-    templateLayer.style.left = '0';
-    templateLayer.style.position = 'absolute';
-    // Empty & init. div style
-    div.style.position = 'relative';
-    if (options.hideOverflow) {
-        div.style.overflow = 'hidden';
-    } else {
-        div.style.overflow = 'visible';
-    }
-    while (div.firstChild) {
-        div.removeChild(div.firstChild);
-    }
-    // For each animation layer, clone template layer, tweak styles, and append to element
-    for (let i = 0; i < layers.length; ++ i) {
-        const layerDiv = templateLayer.cloneNode(false) as HTMLDivElement;
-        layerDiv.style.backgroundImage = `url(${imageUrl})`;
-        div.appendChild(layerDiv);
-    }
-    // Functions to control animation
-    const startAnimation = () => {
-        layers.forEach((layer, i) => div.children[i].animate(layer.steps, layer.timing));
-    };
-    const stopAnimation = () => {
-        layers.forEach((_, i) => div.children[i].getAnimations().map(animation => animation.cancel()));
-    };
-    switch (options.playMode) {
-        case 'always':
-            startAnimation();
-            div.onmouseenter = null;
-            div.onmouseleave = null;
-            break;
-        case 'hover-triggered':
-            div.onmouseenter = () => {
-                startAnimation();
-                div.onmouseenter = null;
-            };
-            div.onmouseleave = null;
-            break;
-        case 'hover-only':
-            div.onmouseenter = startAnimation;
-            div.onmouseleave = stopAnimation;
-            break;
-    }
-};
-
-/**
 * Performs a deep merge of objects and returns new object. Does not modify
 * objects (immutable) and merges arrays via concatenation.
 * @param objects - Objects to merge
 * @returns New object with merged key/values
 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mergeDeep(...objects: readonly any[]): any {
+const mergeDeep = (...objects: readonly any[]): any => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const isObject = (obj: any) => obj && typeof obj === 'object';
     return objects.reduce((prev, obj) => {
@@ -432,59 +337,124 @@ function mergeDeep(...objects: readonly any[]): any {
 
         return prev;
     }, {});
-}
+};
+
+/**
+ * Given a set of computed layers and user options, glitch a given element
+ * @param element 
+ * @param layers 
+ * @param options 
+ */
+const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options: PowerGlitchOptions) => {
+    const alreadyGlitched = !! element.dataset.glitched;
+
+    // Container
+    let container: HTMLDivElement;
+    if (! alreadyGlitched) {
+        container = document.createElement('div');
+        container.style.display = getComputedStyle(element).getPropertyValue('display');
+        container.style.position = 'relative';
+    } else {
+        container = element.parentElement as HTMLDivElement;
+        // Remove all glitch layers but keep the first one (which is the original element)
+        while (container.children.length > 1) {
+            container.removeChild(container.children[1]);
+        }
+        // Cancel the animation on the first layer
+        (container.firstChild as HTMLDivElement).getAnimations().forEach(animation => animation.cancel());
+    }
+    
+    // Overflow
+    if (options.hideOverflow) {
+        container.style.overflow = 'hidden';
+    }
+
+    // If setting HTML manually
+    if (options.html) {
+        element.innerHTML = options.html;
+    }
+
+    // Replace element with the new container
+    if (! alreadyGlitched) {
+        element.parentElement?.insertBefore(container, element);
+        container.prepend(element);
+    }
+
+    // Base layer
+    const baseLayer = element.cloneNode(true) as HTMLElement;
+    baseLayer.style.position = 'absolute';
+    baseLayer.style.top = '0';
+    baseLayer.style.left = '0';
+    baseLayer.style.width = '100%';
+    baseLayer.style.height = '100%';
+    baseLayer.style.userSelect = 'none';
+    baseLayer.style.pointerEvents = 'none';
+
+    for (let i = 0; i < layers.length - 1; ++ i) {
+        const layerDiv = baseLayer.cloneNode(true);
+        container.appendChild(layerDiv);
+    }
+    
+    // Glitch control functions
+    const startGlitch = () => {
+        layers.forEach((layer, i) => container.children[i].animate(layer.steps, layer.timing));
+    };
+    const stopGlitch = () => {
+        layers.forEach((_, i) => container.children[i].getAnimations().map(animation => animation.cancel()));
+    };
+
+    // Depending on the selected play mode, orchestrate when to start/stop the glitch
+    switch (options.playMode) {
+        case 'always':
+            startGlitch();
+            container.onmouseenter = null;
+            container.onmouseleave = null;
+            break;
+        case 'hover':
+            container.onmouseenter = startGlitch;
+            container.onmouseleave = stopGlitch;
+            container.onclick = null;
+            break;
+        case 'click':
+            container.onmouseenter = null;
+            container.onmouseleave = null;
+            container.onclick = () => { stopGlitch(); startGlitch(); };
+            break;
+    }
+
+    element.dataset.glitched = '1';
+};
+
+type RecursivePartial<T> = {
+    [P in keyof T]?: RecursivePartial<T[P]>;
+};
 
 /**
  * Make a single element glitch.
  * @param elOrSelector Element or selector to glitch.
  * @param userOptions Options for the glitch.
  */
-const glitch = (elOrSelector: string | HTMLDivElement = '.powerglitch', userOptions: Partial<PowerGlitchOptions> = {}) => {
+const glitch = (elOrSelector: string | HTMLElement | NodeList | Array<HTMLDivElement> = '.powerglitch', userOptions: RecursivePartial<PowerGlitchOptions> = {}) => {
     // Fix options with defaults
     const options: PowerGlitchOptions = mergeDeep(getDefaultOptions(userOptions.playMode), userOptions);
 
     // Find elements to glitch
-    let elements: (HTMLDivElement | HTMLImageElement)[] = [];
+    let elements: HTMLElement[] = [];
     if (typeof elOrSelector === 'string') {
-        const foundElements = document.querySelectorAll<HTMLDivElement | HTMLImageElement>(elOrSelector);
-        if (! foundElements.length) {
-            throw new Error(`Could not find any element with selector ${elOrSelector}`);
-        }
-        elements = Array.from(foundElements);
-    } else {
+        elements = Array.from(document.querySelectorAll<HTMLElement>(elOrSelector));
+    } else if (elOrSelector instanceof NodeList) {
+        elements = Array.from(elOrSelector) as Array<HTMLElement>;
+    } else if (Array.isArray(elOrSelector)) {
+        elements = elOrSelector;
+    } else if (elOrSelector instanceof HTMLElement) {
         elements = [elOrSelector];
     }
-
-    // Discriminate between img and div for code simplicity
-    const imgElements = elements.filter(el => el instanceof HTMLImageElement) as HTMLImageElement[];
-    const divElements = elements.filter(el => el instanceof HTMLDivElement) as HTMLDivElement[];
 
     // Generate all animation layers
     const layers = generateLayers(options);
 
-    // Animate each image element
-    for (const imgElement of imgElements) {
-        const newContainer = document.createElement('div');
-        newContainer.style.width = imgElement.clientWidth + 'px';
-        newContainer.style.height = imgElement.clientHeight + 'px';
-        if (! imgElement.parentElement) {
-            throw new Error('Unable to glitch image, it is not attached to a parent element');
-        }
-        imgElement.parentElement.insertBefore(newContainer, imgElement);
-        // Remove original image
-        imgElement.remove();
-        // Animate the new container
-        animateDiv(newContainer, layers, options, options.imageUrl || imgElement.src);
-    }
-
     // Animate each div element
-    for (const divElement of divElements) {
-        // If options.imageUrl was not set, we do not know what src to use to glitch this div
-        if (! options.imageUrl) {
-            throw new Error('Options.imageUrl must be set if there are div elements to glitch');
-        }
-        animateDiv(divElement, layers, options, options.imageUrl);
-    }
+    elements.forEach(element => glitchElement(element, layers, options));
 };
 
 export const PowerGlitch = {
