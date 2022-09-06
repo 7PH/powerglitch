@@ -16,7 +16,7 @@ Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/pla
     # or
     yarn add powerglitch
     ```
-    or by [saving the web bundle](https://unpkg.com/powerglitch@latest/dist/powerglitch.min.js) and importing it using a script tag
+    or by [importing the web bundle](https://unpkg.com/powerglitch@latest/dist/powerglitch.min.js) in a script tag (or save it locally)
     ```html
     <script src="https://unpkg.com/powerglitch@latest/dist/powerglitch.min.js"></script>
     ```

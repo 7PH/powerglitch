@@ -138,116 +138,113 @@ onMounted(() => {
         </p>
 
         <!-- Demo 1 -->
-        <h1 class="font-bold mt-8">
-            🤔 Examples
+        <h1 class="font-bold mt-8 mb-2">
+            ▶ Fixed animation
         </h1>
-        <h2 class="text-center font-bold">
-            Fixed animation
-        </h2>
         <div class="justify-center grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="mx-auto flex flex-col">
-                <p class="font-thin">
-                    None
-                </p>
                 <div
                     ref="glitchExample1"
                     class="example-frog"
                 />
+                <p class="font-thin">
+                    None
+                </p>
             </div>
             <div class="mx-auto flex flex-col">
-                <p class="font-thin">
-                    Light
-                </p>
                 <div
                     ref="glitchExample2"
                     class="example-frog"
                 />
+                <p class="font-thin">
+                    Light
+                </p>
             </div>
             <div class="mx-auto flex flex-col">
-                <p class="font-thin">
-                    Medium
-                </p>
                 <div
                     ref="glitchExample3"
                     class="example-frog"
                 />
+                <p class="font-thin">
+                    Medium
+                </p>
             </div>
             <div class="mx-auto flex flex-col">
-                <p class="font-thin">
-                    Heavy
-                </p>
                 <div
                     ref="glitchExample4"
                     class="example-frog"
                 />
+                <p class="font-thin">
+                    Heavy
+                </p>
             </div>
         </div>
 
         <!-- Demo 2 -->
-        <h2 class="text-center font-bold mt-8">
-            Hover to glich
-        </h2>
+        <h1 class="font-bold mt-8 mb-2">
+            ▶ Glitch on hover
+        </h1>
         <div class="justify-center grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="mx-auto flex flex-col">
-                <p class="font-thin mb-2">
-                    Quick
-                </p>
                 <div
                     ref="glitchExample5"
                     class="example-logo"
                 />
+                <p class="font-thin">
+                    Quick
+                </p>
             </div>
             <div class="mx-auto flex flex-col">
-                <p class="font-thin mb-2">
-                    Long
-                </p>
                 <div
                     ref="glitchExample6"
                     class="example-logo"
                 />
+                <p class="font-thin">
+                    Long
+                </p>
             </div>
             <div class="mx-auto flex flex-col">
-                <p class="font-thin mb-2">
-                    Smooth
-                </p>
                 <div
                     ref="glitchExample7"
                     class="example-logo"
                 />
+                <p class="font-thin">
+                    Smooth
+                </p>
             </div>
             <div class="mx-auto flex flex-col">
-                <p class="font-thin mb-2">
-                    Laggy
-                </p>
                 <div
                     ref="glitchExample8"
                     class="example-logo"
                 />
+                <p class="font-thin">
+                    Laggy
+                </p>
             </div>
         </div>
 
         <!-- Demo 3 -->
-        <h2 class="text-center font-bold mt-8">
-            Click to glitch
-        </h2>
+        <h1 class="font-bold mt-8 mb-2">
+            ▶ Glitch on click
+        </h1>
         <div class="justify-center grid grid-cols-2 gap-4 text-center">
-            <div class="mx-auto flex flex-col">
-                <p class="font-thin mb-2">
-                    Button glitch on click
-                </p>
+            <div class="mx-auto flex flex-col pt-7">
                 <div
                     ref="glitchExample9"
                     class="example-button"
                 />
+                <p class="font-thin mt-6">
+                    Button glitch on click
+                </p>
             </div>
             <div class="mx-auto flex flex-col">
-                <p class="font-thin mb-2">
-                    Glitching complex element
-                </p>
                 <div
                     ref="glitchExample10"
                     class="example-complex"
                 />
+                <p class="font-thin mt-2">
+                    Glitching complex element
+                </p>
             </div>
         </div>
 
@@ -321,7 +318,8 @@ PowerGlitch.glitch('.some-element')
 .app {
     max-width: 600px;
 }
-.example-logo {
+.example-logo,
+.example-frog {
     width: 80px;
     height: 80px;
 }
