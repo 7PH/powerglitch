@@ -20,7 +20,9 @@ onMounted(() => {
     PowerGlitch.glitch(glitchExample1.value, {
         html: `<img src="${exampleFrog}" />`,
         shake: false,
-        slice: false,
+        slice: {
+            count: 0,
+        },
     });
     PowerGlitch.glitch(glitchExample2.value, {
         html: `<img src="${exampleFrog}" />`,

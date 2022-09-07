@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useAppStore } from '@/stores/app';
 
 const appStore = useAppStore();
@@ -12,6 +12,16 @@ const selectCode = () => {
     document.getSelection().removeAllRanges();
     document.getSelection().addRange(range);
 };
+
+const replacer = (key, value) => {
+    if (key === 'iterations' && value === Infinity) {
+        return undefined;
+    }
+    if (key === 'html') {
+        return undefined;
+    }
+    return value;
+};
 </script>
 
 <template>
@@ -21,7 +31,7 @@ const selectCode = () => {
             ref="preRef"
             class="bg-white p-4 rounded shadow overflow-auto"
             @click="selectCode"
-            v-text="JSON.stringify(appStore.powerGlitchOptions, (key, value) => key === 'iterations' && value === Infinity ? undefined : value, 2)"
+            v-text="JSON.stringify(appStore.powerGlitchOptions, replacer, 2)"
         />
     </div>
 </template>
