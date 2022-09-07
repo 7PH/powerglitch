@@ -106,6 +106,49 @@ PowerGlitch.glitch(element)
             giving a list of elements or a NodeList resulting from querySelectorAll is allowed.
         </p>
 
+        <!-- Controls -->
+        <h1 class="font-bold mt-8">
+            🟠 Controls
+        </h1>
+        <p class="mt-2">
+            Control the animation using the <span class="font-bold">startGlitch</span> and <span class="font-bold">stopGlitch</span> methods returned by <span class="font-bold">PowerGlitch.glitch()</span>
+        </p>
+        <highlightjs
+            class="rounded-xl overflow-hidden mt-2"
+            language="js"
+            :code="`
+const {
+    startGlitch,
+    stopGlitch
+} = PowerGlitch.glitch('.glitch')
+
+// Stop the glitch
+stopGlitch()
+
+// Re-start the glitch
+startGlitch()
+        `.trim()"
+        />
+
+        <!-- Play modes -->
+        <h1 class="font-bold mt-8">
+            🟤 Play modes
+        </h1>
+        <p class="mt-2">
+            You can choose between 4 play modes: always, hover, click and manual
+        </p>
+        <highlightjs
+            class="rounded-xl overflow-hidden mt-2"
+            language="js"
+            :code="`
+// Start glitch on click only
+PowerGlitch.glitch('.glitch', { playMode: 'click' })
+        `.trim()"
+        />
+        <p class="mt-2">
+            in playMode manual, the glitch never starts until you call startGlitch().
+        </p>
+
         <!-- Customize glitch -->
         <h1 class="font-bold mt-8">
             🟢 Customize

@@ -3,8 +3,9 @@
  * always: Always glitch (default)
  * hover: Glitch on hover
  * click: Glitch will start on each click
+ * manual: Glitch controlled with returned callbacks
  */
-export type PlayModes = 'always' | 'hover' | 'click';
+export type PlayModes = 'always' | 'hover' | 'click' | 'manual';
 
 /**
  * Custom options for the glitch animations.
@@ -90,10 +91,9 @@ type PowerGlitchOptions = {
 
     /**
      * Slice layers are the base animation to give the glitch effect. They clip a part of the element and move it somewhere else.
-     * If not set to false, the slice layers will be generated.
      * The slice animation respects the glitch time span constraint, if set.
      */
-    slice: false | {
+    slice: {
 
         /**
          * Number of layers to generate.
@@ -246,9 +246,6 @@ const getDefaultTimingCss = (stepCount: number) => {
  * @param options
  */
 const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
-    if (! options.slice) {
-        throw new Error('Slice are not enabled');
-    }
     const stepCount = Math.floor(options.slice.velocity * options.timing.duration / 1000) + 1;
     const steps = [];
     for (let index = 0; index < stepCount; ++ index) {
@@ -271,9 +268,14 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
  * @param options
  */
 const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
-
     if (! options.shake) {
-        return { steps: [], timing: getDefaultTimingCss(1) };
+        return {
+            steps: [],
+            timing: {
+                ...getDefaultTimingCss(1),
+                ...options.timing
+            },
+        };
     }
 
     const stepCount = Math.floor(options.shake.velocity * options.timing.duration / 1000) + 1;
@@ -345,7 +347,7 @@ const mergeDeep = (...objects: readonly any[]): any => {
  * @param layers 
  * @param options 
  */
-const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options: PowerGlitchOptions) => {
+const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options: PowerGlitchOptions): { container: HTMLDivElement, startGlitch: () => void, stopGlitch: () => void } => {
     const alreadyGlitched = !! element.dataset.glitched;
 
     // Container
@@ -400,7 +402,7 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
         layers.forEach((layer, i) => container.children[i].animate(layer.steps, layer.timing));
     };
     const stopGlitch = () => {
-        layers.forEach((_, i) => container.children[i].getAnimations().map(animation => animation.cancel()));
+        layers.forEach((_, i) => container.children[i].getAnimations().map(animation => animation.finish()));
     };
 
     // Depending on the selected play mode, orchestrate when to start/stop the glitch
@@ -420,9 +422,16 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
             container.onmouseleave = null;
             container.onclick = () => { stopGlitch(); startGlitch(); };
             break;
+        case 'manual':
+            container.onmouseenter = null;
+            container.onmouseleave = null;
+            container.onclick = null;
+            break;
     }
 
     element.dataset.glitched = '1';
+
+    return { container, startGlitch, stopGlitch };
 };
 
 type RecursivePartial<T> = {
@@ -434,7 +443,7 @@ type RecursivePartial<T> = {
  * @param elOrSelector Element or selector to glitch.
  * @param userOptions Options for the glitch.
  */
-const glitch = (elOrSelector: string | HTMLElement | NodeList | Array<HTMLDivElement> = '.powerglitch', userOptions: RecursivePartial<PowerGlitchOptions> = {}) => {
+const glitch = (elOrSelector: string | HTMLElement | NodeList | Array<HTMLElement> = '.powerglitch', userOptions: RecursivePartial<PowerGlitchOptions> = {}) => {
     // Fix options with defaults
     const options: PowerGlitchOptions = mergeDeep(getDefaultOptions(userOptions.playMode), userOptions);
 
@@ -454,7 +463,14 @@ const glitch = (elOrSelector: string | HTMLElement | NodeList | Array<HTMLDivEle
     const layers = generateLayers(options);
 
     // Animate each div element
-    elements.forEach(element => glitchElement(element, layers, options));
+    const entries = elements.map(element => glitchElement(element, layers, options));
+
+    // Return list of containers and glitch control functions
+    return {
+        containers: entries.map(entry => entry.container),
+        startGlitch: () => entries.forEach(entry => entry.startGlitch()),
+        stopGlitch: () => entries.forEach(entry => entry.stopGlitch()),
+    };
 };
 
 export const PowerGlitch = {
