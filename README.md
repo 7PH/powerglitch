@@ -53,7 +53,7 @@ Want to try it out? Check out the [demo](https://7ph.github.io/powerglitch/#/pla
     ```
 
 5. That's it, your element is glitched!
-6. For customization and optimization tips, check-out the [usage guide](https://7ph.github.io/powerglitch/#/usage).
+6. Check-out the [usage guide](https://7ph.github.io/powerglitch/#/usage) for optimization and usage tips.
 
 ## Useful links
 

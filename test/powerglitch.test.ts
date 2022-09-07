@@ -27,11 +27,12 @@ const baseOptions = {
  * 
  */
 const testAllElementTypes = (name: string, job: (elementType: string) => Promise<void>): void => {
-    /**
-     * The following tests are duplicated for each sample element type 
-     * @see ELEMENTS
-     */
     describe(name, function() {
+
+        /**
+         * The given test job is duplicated for each sample element type 
+         * @see ELEMENTS
+         */
         for (const elementType in ELEMENTS) {
             test(elementType, async () => {
                 await job(elementType);

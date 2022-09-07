@@ -289,12 +289,12 @@ PowerGlitch.glitch('.some-element')
 `.trim()"
         />
         <p class="mt-4">
-            To optimize and customize glitched elements, check the 
+            Check the 
             <router-link
                 to="/usage"
                 class="underline"
             >
-                usage guide
+                full usage guide
             </router-link>.
         </p>
 
