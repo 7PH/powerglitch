@@ -1,4 +1,4 @@
-<img src="./assets/intro.gif">
+<img src="./assets/intro.gif" alt="">
 
 PowerGlitch is a standalone library with no external dependencies. It leverages CSS animations to glitch anything on the web, without using a canvas. It weights less than 2kb minified and gzipped.<br>
 
@@ -61,6 +61,7 @@ Documentation
 - Visually try out effects using the [demo](https://7ph.github.io/powerglitch/#/playground).
 - Lookup PowerGlitch [home page](https://7ph.github.io/powerglitch/).
 - For customization and optimization tips, check the [usage guide](https://7ph.github.io/powerglitch/#/usage).
+- Check out the [api documentation](https://7ph.github.io/powerglitch/api-docs/variables/PowerGlitch.html) for reference.
 
 Integrations
 - Vue plugin [vue-powerglitch](https://github.com/7PH/vue-powerglitch)

@@ -1,16 +1,18 @@
 /**
  * Available play modes
- * always: Always glitch (default)
- * hover: Glitch on hover
- * click: Glitch will start on each click
- * manual: Glitch controlled with returned callbacks
+ * 
+ * @remarks
+ * - always: Always glitch (default)
+ * - hover: Glitch on hover
+ * - click: Glitch will start on each click
+ * - manual: Glitch controlled with returned callbacks
  */
 export type PlayModes = 'always' | 'hover' | 'click' | 'manual';
 
 /**
  * Custom options for the glitch animations.
  */
-type PowerGlitchOptions = {
+export type PowerGlitchOptions = {
 
     /**
      * Html to glitch. If not provided, will use the elements themselves.
@@ -123,10 +125,17 @@ type PowerGlitchOptions = {
 };
 
 /**
- * One layer to generate
+ * Definition for one layer, part of the glitch animation.
  */
-type LayerDefinition = {
+export type LayerDefinition = {
+    /**
+     * Each animation step is a hashmap linking CSS property names to their value for this step. 
+     */
     steps: { [cssPropertyName: string]: string }[],
+
+    /**
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#parameters
+     */
     timing: EffectTiming,
 };
 
@@ -141,7 +150,7 @@ type Rectangle = {
 };
 
 /**
- * Get best-looking default options for most elements.
+ * Get best-looking default options for most elements for a given playMode.
  */
 const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions => {
     return {
@@ -291,8 +300,7 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
 };
 
 /**
- * Generate all layers
- * @param options
+ * Generate the layers that deterministically define a glitch animation for the specified options.
  */
 const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
     const layers = [
@@ -434,16 +442,48 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     return { container, startGlitch, stopGlitch };
 };
 
-type RecursivePartial<T> = {
+export type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>;
 };
 
 /**
- * Make a single element glitch.
- * @param elOrSelector Element or selector to glitch.
- * @param userOptions Options for the glitch.
+ * Options given to the glitch method
  */
-const glitch = (elOrSelector: string | HTMLElement | NodeList | Array<HTMLElement> = '.powerglitch', userOptions: RecursivePartial<PowerGlitchOptions> = {}) => {
+export type GlitchPartialOptions = RecursivePartial<PowerGlitchOptions>;
+
+/**
+ * Specifies what to glitch. Query selector, html element, list of html elements or NodeList.
+ */
+export type GlitchableElement = string | HTMLElement | NodeList | Array<HTMLElement>;
+
+/**
+ * The result for glitching one or multiple elements.
+ */
+export type GlitchResult = {
+
+    /**
+     * Lists of containers for each glitched element.
+     */
+    containers: HTMLDivElement[];
+
+    /**
+     * Callback to force-start the glitch animation regardless of the selected play mode.
+     */
+    startGlitch: () => void;
+
+    /**
+     * Callback to force-stop the glitch animation, regardless of the selected play mode.
+     */
+    stopGlitch: () => void;
+}
+
+/**
+ * Make a single element glitch.
+ * 
+ * @param elOrSelector What to glitch. Can be a query selector, a list of HTMLElement, an HTMLElement or a NodeList.
+ * @param userOptions Optional glitch customization options.
+ */
+const glitch = (elOrSelector: GlitchableElement = '.powerglitch', userOptions: GlitchPartialOptions = {}): GlitchResult => {
     // Fix options with defaults
     const options: PowerGlitchOptions = mergeDeep(getDefaultOptions(userOptions.playMode), userOptions);
 

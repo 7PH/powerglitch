@@ -56,6 +56,13 @@ onMounted(() => PowerGlitch.glitch(logoRef.value));
             >
                 usage
             </RouterLink>
+            <a
+                target="_blank"
+                href="./api-docs/variables/PowerGlitch.html"
+                class="underline"
+            >
+                documentation
+            </a>
             <RouterLink
                 to="/playground"
                 class="underline"

@@ -221,13 +221,13 @@ PowerGlitch.glitch(
             🟡 API reference
         </h1>
         <p class="mt-2 pb-8">
-            To know what options are accepted and what they mean, <a
+            Check-out the <a
                 class="underline"
                 target="_blank"
-                href="https://github.com/7PH/powerglitch/blob/master/src/index.ts#L1"
+                href="./api-docs/variables/PowerGlitch.html"
             >
-                refer to the TypeScript type definitions
-            </a>.
+                API documentation
+            </a>
         </p>
     </div>
 </template>

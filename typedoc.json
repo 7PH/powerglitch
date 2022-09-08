@@ -1,0 +1,8 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["src"],
+    "out": "docs/api-docs",
+    "name": "PowerGlitch",
+    "tsconfig": "./tsconfig.json",
+    "sort": ["source-order"]
+}
