@@ -407,10 +407,21 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     
     // Glitch control functions
     const startGlitch = () => {
-        layers.forEach((layer, i) => container.children[i].animate(layer.steps, layer.timing));
+        layers.forEach((layer, i) => {
+            container
+                .children[i]
+                .animate(layer.steps, layer.timing);
+        });
     };
     const stopGlitch = () => {
-        layers.forEach((_, i) => container.children[i].getAnimations().map(animation => animation.finish()));
+        layers.forEach((_, i) => {
+            container
+                .children[i]
+                .getAnimations()
+                .forEach(animation => {
+                    animation.cancel();
+                });
+        });
     };
 
     // Depending on the selected play mode, orchestrate when to start/stop the glitch

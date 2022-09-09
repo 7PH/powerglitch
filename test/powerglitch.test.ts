@@ -48,7 +48,9 @@ const testAllElementTypes = (name: string, job: (elementType: string) => Promise
  */
 const ensureAllLayersPlaying = (container: HTMLDivElement, playing: boolean) => {
     for (const layerDiv of container.children) {
-        expect(layerDiv.getAnimations().length).toBe(playing ? 1 : 0);
+        const animations = layerDiv.getAnimations();
+        const activeAnimations = animations.filter(animation => typeof animation.effect?.getComputedTiming().localTime === 'number');
+        expect(activeAnimations).toHaveLength(playing ? 1 : 0);
     }
 };
 
@@ -236,10 +238,15 @@ describe('Glitch giving play modes', () => {
             ...baseOptions,
             playMode: 'manual',
         });
-        
+
+        // In manual, animation should not play at first
         ensureAllLayersPlaying(containers[0], false);
+
+        // Once startGlitch is called, the animation should play
         startGlitch();
         ensureAllLayersPlaying(containers[0], true);
+
+        // When stopGlitch is called, the animation should stop
         stopGlitch();
         ensureAllLayersPlaying(containers[0], false);
     });
