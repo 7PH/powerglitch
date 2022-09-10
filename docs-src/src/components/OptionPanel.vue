@@ -54,8 +54,8 @@ const appStore = useAppStore();
             v-model="appStore.powerGlitchOptions.timing.duration"
             class="mt-1"
             :title="'Loop duration (ms)'"
-            :min="500"
-            :max="10000"
+            :min="150"
+            :max="4000"
             :step="100"
         />
         <ToggleGroupOption

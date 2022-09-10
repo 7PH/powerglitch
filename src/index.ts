@@ -176,30 +176,30 @@ const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions =
 };
 
 /**
+ * Glitch factor function, returns a value between 0 and 1 telling how much the animation should glitch at a given stepPct.
+ */
+const getGlitchFactor = (options: PowerGlitchOptions, stepPct: number) => {
+    if (! options.glitchTimeSpan) {
+        return 1;
+    }
+    const glitchStart = options.glitchTimeSpan.start;
+    const glitchEnd = options.glitchTimeSpan.end;
+    if (stepPct < glitchStart || stepPct > glitchEnd) {
+        return 0;
+    }
+    const glitchPeak = glitchStart + (glitchEnd - glitchStart) / 2;
+    if (stepPct < glitchPeak) {
+        return (stepPct - glitchStart) / (glitchPeak - glitchStart);
+    } else {
+        return (glitchEnd - stepPct) / (glitchEnd - glitchPeak);
+    }
+};
+
+/**
  * Get a random value between -1 and 1, which biases towards the center if the animation should not glitch at the given `stepPct` moment.
  */
 const getGlitchRandom = (options: PowerGlitchOptions, stepPct: number) => {
-    // Get glitch factor for this step
-    let glitchFactor = 0;
-    if (options.glitchTimeSpan) {
-        const glitchStart = options.glitchTimeSpan.start;
-        const glitchEnd = options.glitchTimeSpan.end;
-        if (stepPct < glitchStart || stepPct > glitchEnd) {
-            return 0;
-        }
-        const glitchPeak = glitchStart + (glitchEnd - glitchStart) / 2;
-        if (stepPct < glitchPeak) {
-            glitchFactor = (stepPct - glitchStart) / (glitchPeak - glitchStart);
-        } else {
-            glitchFactor = (glitchEnd - stepPct) / (glitchEnd - glitchPeak);
-        }
-    } else {
-        glitchFactor = 1;
-    }
-
-    // Apply glitch factor to a uniform random value between -1 and 1
-    const rand = (Math.random() - .5) * 2;
-    return rand * glitchFactor;
+    return (Math.random() - .5) * 2 * getGlitchFactor(options, stepPct);
 };
 
 /**
@@ -252,11 +252,21 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
     const stepCount = Math.floor(options.slice.velocity * options.timing.duration / 1000) + 1;
     const steps = [];
     for (let index = 0; index < stepCount; ++ index) {
+        if (getGlitchFactor(options, index / stepCount) === 0) {
+            steps.push({
+                opacity: '0',
+                transform: '',
+                clipPath: 'unset',
+            });
+            continue;
+        }
         const rectangle = getRandomRectangle({ minHeight: options.slice.minHeight, maxHeight: options.slice.maxHeight, minWidth: 1, maxWidth: 1 });
         const translateX = getGlitchRandom(options, index / stepCount) * 30;
-        const styles: {[cssPropertyName: string]: string} = {};
-        styles.transform = `translate3d(${translateX}%, 0, 0)`;
-        styles.clipPath = getRectanglePolygonCss(rectangle);
+        const styles: {[cssPropertyName: string]: string} = {
+            opacity: '1',
+            transform: `translate3d(${translateX}%, 0, 0)`,
+            clipPath: getRectanglePolygonCss(rectangle),
+        };
         if (options.slice.hueRotate) {
             styles.filter = `hue-rotate(${Math.floor(getGlitchRandom(options, index / stepCount) * 360)}deg)`;
         }
@@ -406,6 +416,7 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     baseLayer.style.gridArea = '1 / 1 / -1 / -1';
     baseLayer.style.userSelect = 'none';
     baseLayer.style.pointerEvents = 'none';
+    baseLayer.style.opacity = '0';
 
     for (let i = 0; i < layers.length - 1; ++ i) {
         const layerDiv = baseLayer.cloneNode(true);

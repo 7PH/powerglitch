@@ -54,7 +54,7 @@ onMounted(() => {
         html: `<img src="${logo}" />`,
         playMode: 'hover',
         timing: {
-            duration: 1500,
+            duration: 2500,
         },
         glitchTimeSpan: {
             start: 0,
@@ -101,7 +101,7 @@ onMounted(() => {
     });
     PowerGlitch.glitch(glitchExample10.value, {
         html: `
-            <div class="border border-2 rounded shadow">
+            <div class="border border-2 border-gray-400 px-2 py-1 rounded-xl">
                 <p>
                     Power <b>Glitch</b> 🌎
                 </p>
