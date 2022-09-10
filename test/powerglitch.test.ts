@@ -43,7 +43,8 @@ const testAllElementTypes = (name: string, job: (elementType: string) => Promise
  * @param playing Whether all layers should be playing or not
  */
 const ensureAllLayersPlaying = (container: HTMLDivElement, playing: boolean) => {
-    for (const layerDiv of container.children) {
+    const layersContainer = container.firstElementChild as HTMLDivElement;
+    for (const layerDiv of layersContainer.children) {
         const animations = layerDiv.getAnimations();
         const activeAnimations = animations.filter(animation => typeof animation.effect?.getComputedTiming().localTime === 'number');
         expect(activeAnimations).toHaveLength(playing ? 1 : 0);
@@ -122,10 +123,10 @@ describe('Given glitching more than once the same element', () => {
         const { element } = init(ELEMENTS[elementType]);
         const { containers: containers1 } = PowerGlitch.glitch(element, { ...baseOptions, slice: { count: 10 } });
         expect(containers1.length).toBe(1);
-        expect(containers1[0].children.length).toBe(11);
+        expect(containers1[0].firstElementChild?.children.length).toBe(11);
         const { containers: containers2 } = PowerGlitch.glitch(element, { ...baseOptions, slice: { count: 20 } });
         expect(containers2.length).toBe(1);
-        expect(containers2[0].children.length).toBe(21);
+        expect(containers2[0].firstElementChild?.children.length).toBe(21);
     });
 });
 
@@ -156,9 +157,11 @@ describe('Given slice option', () => {
             },
         });
 
-        // When creating 10 slices, the number of created layers should be 1 + 10 (the basis layer plus the slice layers)
+        // One element only should be glitched
         expect(containers.length).toBe(1);
-        expect(containers[0].children.length).toBe(11);
+
+        // When creating 10 slices, the number of created layers should be 1 + 10 (the basis layer plus the slice layers)
+        expect(containers[0].firstElementChild?.children.length).toBe(11);
     });
 });
 

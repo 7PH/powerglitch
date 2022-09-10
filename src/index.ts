@@ -352,20 +352,33 @@ const mergeDeep = (...objects: readonly any[]): any => {
 const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options: PowerGlitchOptions): { container: HTMLDivElement, startGlitch: () => void, stopGlitch: () => void } => {
     const alreadyGlitched = !! element.dataset.glitched;
 
-    // Container
+    /**
+     * Depending on the element state (whether it was glitched before or not, current element display attributes)
+     */
     let container: HTMLDivElement;
+    let layersContainer: HTMLDivElement;
+
+    // If new glitch
     if (! alreadyGlitched) {
+        // Setup the layer container using grid to stack elements
+        layersContainer = document.createElement('div');
+        layersContainer.style.display = 'grid';
+        // If current element is an inline element
         container = document.createElement('div');
-        // We are using grid display to stack layers
-        container.style.display = 'grid';
+        if (getComputedStyle(element).getPropertyValue('display').match(/^inline/)) {
+            container.style.display = 'inline-block';
+        }
+        // Add the layers container to the global container
+        container.appendChild(layersContainer);
     } else {
-        container = element.parentElement as HTMLDivElement;
+        layersContainer = element.parentElement as HTMLDivElement;
+        container = element.parentElement?.parentElement as HTMLDivElement;
         // Remove all glitch layers but keep the first one (which is the original element)
-        while (container.children.length > 1) {
-            container.removeChild(container.children[1]);
+        while (layersContainer.children.length > 1) {
+            layersContainer.removeChild(layersContainer.children[1]);
         }
         // Cancel the animation on the first layer
-        (container.firstChild as HTMLDivElement).getAnimations().forEach(animation => animation.cancel());
+        (layersContainer.firstElementChild as HTMLDivElement).getAnimations().forEach(animation => animation.cancel());
     }
     
     // Overflow
@@ -381,7 +394,7 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     // Replace element with the new container
     if (! alreadyGlitched) {
         element.parentElement?.insertBefore(container, element);
-        container.prepend(element);
+        layersContainer.prepend(element);
     }
     
     // Stack original element too (it is used as the base shaking layer)
@@ -396,20 +409,20 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
 
     for (let i = 0; i < layers.length - 1; ++ i) {
         const layerDiv = baseLayer.cloneNode(true);
-        container.appendChild(layerDiv);
+        layersContainer.appendChild(layerDiv);
     }
     
     // Glitch control functions
     const startGlitch = () => {
         layers.forEach((layer, i) => {
-            container
+            layersContainer
                 .children[i]
                 .animate(layer.steps, layer.timing);
         });
     };
     const stopGlitch = () => {
         layers.forEach((_, i) => {
-            container
+            layersContainer
                 .children[i]
                 .getAnimations()
                 .forEach(animation => {
