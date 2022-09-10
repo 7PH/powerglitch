@@ -24,15 +24,11 @@ const baseOptions = {
 };
 
 /**
- * 
+ * Duplicate a test for all element types
+ * @see ELEMENTS
  */
 const testAllElementTypes = (name: string, job: (elementType: string) => Promise<void>): void => {
     describe(name, function() {
-
-        /**
-         * The given test job is duplicated for each sample element type 
-         * @see ELEMENTS
-         */
         for (const elementType in ELEMENTS) {
             test(elementType, async () => {
                 await job(elementType);
@@ -76,6 +72,7 @@ describe('Glitching more than one element', () => {
         const { containers } = PowerGlitch.glitch(elements, { ...baseOptions });
         expect(containers.length).toBe(elements.length);
     });
+
     /**
      * Glitch an array of HTMLElements
      */
@@ -88,7 +85,6 @@ describe('Glitching more than one element', () => {
 });
 
 describe('Finding the element to glitch', () => {
-
     /**
      * Glitch from query selector
      */

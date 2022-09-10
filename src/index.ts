@@ -1,6 +1,5 @@
 /**
  * Available play modes
- * 
  * @remarks
  * - always: Always glitch (default)
  * - hover: Glitch on hover
@@ -13,10 +12,8 @@ export type PlayModes = 'always' | 'hover' | 'click' | 'manual';
  * Custom options for the glitch animations.
  */
 export type PowerGlitchOptions = {
-
     /**
-     * Html to glitch. If not provided, will use the elements themselves.
-     * If provided, all elements should have an `innerHTML` property.
+     * Html to glitch. If not provided, will use the elements themselves. If provided, all elements should have an `innerHTML` property.
      */
     html?: string,
 
@@ -34,7 +31,6 @@ export type PowerGlitchOptions = {
      * Timing of the animation.
      */
     timing: {
-
         /**
          * Duration of the animation loop in milliseconds.
          */
@@ -53,11 +49,11 @@ export type PowerGlitchOptions = {
 
     /**
      * Specify if the animation should always glitch uniformly (if false) or if it should glitch at a given time.
+     * @remarks
      * If start and end are set, the animation will glitch between those two times, and the peak glitch will be at the middle.
      * glitchTimeSpan.end should be greater than glitchTimeSpan.start. Otherwise, the glitch will not happen.
      */
     glitchTimeSpan: false | {
-
         /**
          * Start time of the glitch in percent, between 0 and 1.
          */
@@ -71,10 +67,10 @@ export type PowerGlitchOptions = {
 
     /**
      * Whether the base layer should shake. If not set to false, the base layer will shake in the given amplitude.
+     * @remarks
      * The shake animation respects the glitch time span constraint, if set.
      */
     shake: false | {
-
         /**
          * Number of steps to compute for each layer per second of animation.
          */
@@ -93,10 +89,10 @@ export type PowerGlitchOptions = {
 
     /**
      * Slice layers are the base animation to give the glitch effect. They clip a part of the element and move it somewhere else.
+     * @remarks
      * The slice animation respects the glitch time span constraint, if set.
      */
     slice: {
-
         /**
          * Number of layers to generate.
          */
@@ -179,7 +175,6 @@ const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions =
     };
 };
 
-
 /**
  * Get a random value between -1 and 1, which biases towards the center if the animation should not glitch at the given `stepPct` moment.
  */
@@ -206,7 +201,6 @@ const getGlitchRandom = (options: PowerGlitchOptions, stepPct: number) => {
     const rand = (Math.random() - .5) * 2;
     return rand * glitchFactor;
 };
-
 
 /**
  * Get a random rectangle values in % to glitch. Percent values are between 0 and 100.
@@ -490,7 +484,6 @@ export type GlitchResult = {
 
 /**
  * Make a single element glitch.
- * 
  * @param elOrSelector What to glitch. Can be a query selector, a list of HTMLElement, an HTMLElement or a NodeList.
  * @param userOptions Optional glitch customization options.
  */
