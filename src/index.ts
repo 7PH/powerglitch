@@ -356,8 +356,8 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     let container: HTMLDivElement;
     if (! alreadyGlitched) {
         container = document.createElement('div');
-        container.style.display = getComputedStyle(element).getPropertyValue('display');
-        container.style.position = 'relative';
+        // We are using grid display to stack layers
+        container.style.display = 'grid';
     } else {
         container = element.parentElement as HTMLDivElement;
         // Remove all glitch layers but keep the first one (which is the original element)
@@ -383,14 +383,14 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
         element.parentElement?.insertBefore(container, element);
         container.prepend(element);
     }
+    
+    // Stack original element too (it is used as the base shaking layer)
+    element.style.gridArea = '1 / 1 / -1 / -1';
 
     // Base layer
     const baseLayer = element.cloneNode(true) as HTMLElement;
-    baseLayer.style.position = 'absolute';
-    baseLayer.style.top = '0';
-    baseLayer.style.left = '0';
-    baseLayer.style.width = '100%';
-    baseLayer.style.height = '100%';
+    // Stack this layer
+    baseLayer.style.gridArea = '1 / 1 / -1 / -1';
     baseLayer.style.userSelect = 'none';
     baseLayer.style.pointerEvents = 'none';
 
