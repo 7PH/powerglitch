@@ -1,8 +1,8 @@
 {
     "name": "powerglitch",
-    "version": "2.0.1",
-    "main": "./lib/index.js",
-    "types": "./lib/index.d.ts",
+    "version": "2.0.2",
+    "main": "./lib/src/index.js",
+    "types": "./lib/src/index.d.ts",
     "scripts": {
         "dev": "vite",
         "build:docs": "vite build --emptyOutDir",
@@ -16,7 +16,7 @@
         "test": "npm run lint && npm run size && jest"
     },
     "files": [
-        "/lib",
+        "/lib/src",
         "/dist"
     ],
     "devDependencies": {
