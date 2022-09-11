@@ -231,17 +231,7 @@ const getRectanglePolygonCss = ({ top, left, height, width }: Rectangle) => {
     const bottomRight = `${left + width}% ${top + height}%`;
     const bottomLeft = `${left}% ${top + height}%`;
     const topLeft = `${left}% ${top}%`;
-    return `polygon(${topRight}, ${bottomRight}, ${bottomLeft}, ${topLeft})`;
-};
-
-/**
- * Get default timing function, which makes sequential changes without transition.
- * @param stepCount Number of steps in the animation
- */
-const getDefaultTimingCss = (stepCount: number) => {
-    return {
-        easing: `steps(${stepCount}, jump-start)`,
-    };
+    return `polygon(${topRight},${bottomRight},${bottomLeft},${topLeft})`;
 };
 
 /**
@@ -264,7 +254,7 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
         const translateX = getGlitchRandom(options, index / stepCount) * 30;
         const styles: {[cssPropertyName: string]: string} = {
             opacity: '1',
-            transform: `translate3d(${translateX}%, 0, 0)`,
+            transform: `translate3d(${translateX}%,0,0)`,
             clipPath: getRectanglePolygonCss(rectangle),
         };
         if (options.slice.hueRotate) {
@@ -273,7 +263,13 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
         steps.push(styles);
     }
     
-    return { steps, timing: { ...getDefaultTimingCss(stepCount), ...options.timing } };
+    return {
+        steps,
+        timing: {
+            easing: `steps(${stepCount},jump-start)`,
+            ...options.timing
+        },
+    };
 };
 
 /**
@@ -284,10 +280,7 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
     if (! options.shake) {
         return {
             steps: [],
-            timing: {
-                ...getDefaultTimingCss(1),
-                ...options.timing
-            },
+            timing: {},
         };
     }
 
@@ -297,10 +290,16 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
         const translateX = getGlitchRandom(options, index / stepCount) * options.shake.amplitudeX * 100;
         const translateY = getGlitchRandom(options, index / stepCount) * options.shake.amplitudeY * 100;
         const styles: {[cssPropertyName: string]: string} = {};
-        styles.transform = `translate3d(${translateX}%, ${translateY}%, 0)`;
+        styles.transform = `translate3d(${translateX}%,${translateY}%,0)`;
         steps.push(styles);
     }
-    return { steps, timing: { ...getDefaultTimingCss(stepCount), ...options.timing } };
+    return {
+        steps,
+        timing: {
+            easing: `steps(${stepCount},jump-start)`,
+            ...options.timing
+        },
+    };
 };
 
 /**
@@ -408,12 +407,12 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     }
     
     // Stack original element too (it is used as the base shaking layer)
-    element.style.gridArea = '1 / 1 / -1 / -1';
+    element.style.gridArea = '1/1/-1/-1';
 
     // Base layer
     const baseLayer = element.cloneNode(true) as HTMLElement;
     // Stack this layer
-    baseLayer.style.gridArea = '1 / 1 / -1 / -1';
+    baseLayer.style.gridArea = '1/1/-1/-1';
     baseLayer.style.userSelect = 'none';
     baseLayer.style.pointerEvents = 'none';
     baseLayer.style.opacity = '0';
