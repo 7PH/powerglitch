@@ -9,6 +9,7 @@ export const useAppStore = defineStore('main', {
         const htmlElements = {
             'image': `<img src="${defaultImage}" />`,
             'button': '<button>a button 🤷‍♀️</button>',
+            'paragraph': '<p>Power Glitch 🌎</p>',
         };
 
         return {
@@ -37,7 +38,7 @@ export const useAppStore = defineStore('main', {
             
             const htmlElementKey = {
                 'always': 'image',
-                'hover': 'image',
+                'hover': 'paragraph',
                 'click': 'button',
             }[playMode];
             this.powerGlitchOptions.html = this.htmlElements[htmlElementKey];

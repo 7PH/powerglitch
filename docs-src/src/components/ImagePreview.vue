@@ -12,7 +12,6 @@ const rebuild = () => {
     if (! container.value) {
         return;
     }
-    console.log('rebuilding');
     PowerGlitch.glitch(container.value, appStore.powerGlitchOptions);
 };
 

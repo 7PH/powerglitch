@@ -176,30 +176,30 @@ const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions =
 };
 
 /**
+ * Glitch factor function, returns a value between 0 and 1 telling how much the animation should glitch at a given stepPct.
+ */
+const getGlitchFactor = (options: PowerGlitchOptions, stepPct: number) => {
+    if (! options.glitchTimeSpan) {
+        return 1;
+    }
+    const glitchStart = options.glitchTimeSpan.start;
+    const glitchEnd = options.glitchTimeSpan.end;
+    if (stepPct < glitchStart || stepPct > glitchEnd) {
+        return 0;
+    }
+    const glitchPeak = glitchStart + (glitchEnd - glitchStart) / 2;
+    if (stepPct < glitchPeak) {
+        return (stepPct - glitchStart) / (glitchPeak - glitchStart);
+    } else {
+        return (glitchEnd - stepPct) / (glitchEnd - glitchPeak);
+    }
+};
+
+/**
  * Get a random value between -1 and 1, which biases towards the center if the animation should not glitch at the given `stepPct` moment.
  */
 const getGlitchRandom = (options: PowerGlitchOptions, stepPct: number) => {
-    // Get glitch factor for this step
-    let glitchFactor = 0;
-    if (options.glitchTimeSpan) {
-        const glitchStart = options.glitchTimeSpan.start;
-        const glitchEnd = options.glitchTimeSpan.end;
-        if (stepPct < glitchStart || stepPct > glitchEnd) {
-            return 0;
-        }
-        const glitchPeak = glitchStart + (glitchEnd - glitchStart) / 2;
-        if (stepPct < glitchPeak) {
-            glitchFactor = (stepPct - glitchStart) / (glitchPeak - glitchStart);
-        } else {
-            glitchFactor = (glitchEnd - stepPct) / (glitchEnd - glitchPeak);
-        }
-    } else {
-        glitchFactor = 1;
-    }
-
-    // Apply glitch factor to a uniform random value between -1 and 1
-    const rand = (Math.random() - .5) * 2;
-    return rand * glitchFactor;
+    return (Math.random() - .5) * 2 * getGlitchFactor(options, stepPct);
 };
 
 /**
@@ -231,17 +231,7 @@ const getRectanglePolygonCss = ({ top, left, height, width }: Rectangle) => {
     const bottomRight = `${left + width}% ${top + height}%`;
     const bottomLeft = `${left}% ${top + height}%`;
     const topLeft = `${left}% ${top}%`;
-    return `polygon(${topRight}, ${bottomRight}, ${bottomLeft}, ${topLeft})`;
-};
-
-/**
- * Get default timing function, which makes sequential changes without transition.
- * @param stepCount Number of steps in the animation
- */
-const getDefaultTimingCss = (stepCount: number) => {
-    return {
-        easing: `steps(${stepCount}, jump-start)`,
-    };
+    return `polygon(${topRight},${bottomRight},${bottomLeft},${topLeft})`;
 };
 
 /**
@@ -252,18 +242,34 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
     const stepCount = Math.floor(options.slice.velocity * options.timing.duration / 1000) + 1;
     const steps = [];
     for (let index = 0; index < stepCount; ++ index) {
+        if (getGlitchFactor(options, index / stepCount) === 0) {
+            steps.push({
+                opacity: '0',
+                transform: '',
+                clipPath: 'unset',
+            });
+            continue;
+        }
         const rectangle = getRandomRectangle({ minHeight: options.slice.minHeight, maxHeight: options.slice.maxHeight, minWidth: 1, maxWidth: 1 });
         const translateX = getGlitchRandom(options, index / stepCount) * 30;
-        const styles: {[cssPropertyName: string]: string} = {};
-        styles.transform = `translate3d(${translateX}%, 0, 0)`;
-        styles.clipPath = getRectanglePolygonCss(rectangle);
+        const styles: {[cssPropertyName: string]: string} = {
+            opacity: '1',
+            transform: `translate3d(${translateX}%,0,0)`,
+            clipPath: getRectanglePolygonCss(rectangle),
+        };
         if (options.slice.hueRotate) {
             styles.filter = `hue-rotate(${Math.floor(getGlitchRandom(options, index / stepCount) * 360)}deg)`;
         }
         steps.push(styles);
     }
     
-    return { steps, timing: { ...getDefaultTimingCss(stepCount), ...options.timing } };
+    return {
+        steps,
+        timing: {
+            easing: `steps(${stepCount},jump-start)`,
+            ...options.timing
+        },
+    };
 };
 
 /**
@@ -274,10 +280,7 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
     if (! options.shake) {
         return {
             steps: [],
-            timing: {
-                ...getDefaultTimingCss(1),
-                ...options.timing
-            },
+            timing: {},
         };
     }
 
@@ -287,10 +290,16 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
         const translateX = getGlitchRandom(options, index / stepCount) * options.shake.amplitudeX * 100;
         const translateY = getGlitchRandom(options, index / stepCount) * options.shake.amplitudeY * 100;
         const styles: {[cssPropertyName: string]: string} = {};
-        styles.transform = `translate3d(${translateX}%, ${translateY}%, 0)`;
+        styles.transform = `translate3d(${translateX}%,${translateY}%,0)`;
         steps.push(styles);
     }
-    return { steps, timing: { ...getDefaultTimingCss(stepCount), ...options.timing } };
+    return {
+        steps,
+        timing: {
+            easing: `steps(${stepCount},jump-start)`,
+            ...options.timing
+        },
+    };
 };
 
 /**
@@ -352,20 +361,33 @@ const mergeDeep = (...objects: readonly any[]): any => {
 const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options: PowerGlitchOptions): { container: HTMLDivElement, startGlitch: () => void, stopGlitch: () => void } => {
     const alreadyGlitched = !! element.dataset.glitched;
 
-    // Container
+    /**
+     * Depending on the element state (whether it was glitched before or not, current element display attributes)
+     */
     let container: HTMLDivElement;
+    let layersContainer: HTMLDivElement;
+
+    // If new glitch
     if (! alreadyGlitched) {
+        // Setup the layer container using grid to stack elements
+        layersContainer = document.createElement('div');
+        layersContainer.style.display = 'grid';
+        // If current element is an inline element
         container = document.createElement('div');
-        container.style.display = getComputedStyle(element).getPropertyValue('display');
-        container.style.position = 'relative';
+        if (getComputedStyle(element).getPropertyValue('display').match(/^inline/)) {
+            container.style.display = 'inline-block';
+        }
+        // Add the layers container to the global container
+        container.appendChild(layersContainer);
     } else {
-        container = element.parentElement as HTMLDivElement;
+        layersContainer = element.parentElement as HTMLDivElement;
+        container = element.parentElement?.parentElement as HTMLDivElement;
         // Remove all glitch layers but keep the first one (which is the original element)
-        while (container.children.length > 1) {
-            container.removeChild(container.children[1]);
+        while (layersContainer.children.length > 1) {
+            layersContainer.removeChild(layersContainer.children[1]);
         }
         // Cancel the animation on the first layer
-        (container.firstChild as HTMLDivElement).getAnimations().forEach(animation => animation.cancel());
+        (layersContainer.firstElementChild as HTMLDivElement).getAnimations().forEach(animation => animation.cancel());
     }
     
     // Overflow
@@ -381,35 +403,36 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     // Replace element with the new container
     if (! alreadyGlitched) {
         element.parentElement?.insertBefore(container, element);
-        container.prepend(element);
+        layersContainer.prepend(element);
     }
+    
+    // Stack original element too (it is used as the base shaking layer)
+    element.style.gridArea = '1/1/-1/-1';
 
     // Base layer
     const baseLayer = element.cloneNode(true) as HTMLElement;
-    baseLayer.style.position = 'absolute';
-    baseLayer.style.top = '0';
-    baseLayer.style.left = '0';
-    baseLayer.style.width = '100%';
-    baseLayer.style.height = '100%';
+    // Stack this layer
+    baseLayer.style.gridArea = '1/1/-1/-1';
     baseLayer.style.userSelect = 'none';
     baseLayer.style.pointerEvents = 'none';
+    baseLayer.style.opacity = '0';
 
     for (let i = 0; i < layers.length - 1; ++ i) {
         const layerDiv = baseLayer.cloneNode(true);
-        container.appendChild(layerDiv);
+        layersContainer.appendChild(layerDiv);
     }
     
     // Glitch control functions
     const startGlitch = () => {
         layers.forEach((layer, i) => {
-            container
+            layersContainer
                 .children[i]
                 .animate(layer.steps, layer.timing);
         });
     };
     const stopGlitch = () => {
         layers.forEach((_, i) => {
-            container
+            layersContainer
                 .children[i]
                 .getAnimations()
                 .forEach(animation => {
