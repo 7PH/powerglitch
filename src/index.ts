@@ -18,7 +18,26 @@ export type PowerGlitchOptions = {
     html?: string,
 
     /**
-     * Play mode. Refer to PlayModes type definition for more information.
+     * Whether to create the 2 containers (one containing the other) necessary to create the glitch animation (defaults to true).
+     * @remarks
+     * The glitch effect relies on cloning the glitched element, and stacking them on top of the others inside 2 containers (one containing the other).
+     * The embedded container is called the layer container, it has grid display and stacks its children, which are the original element and its cloned versions.
+     * The top-level container replaces the original element (and the element is moved inside the layer container)
+     * This logic is necessary to ensure layout consistency before/after the glitch, and to create the actual glitch effect with CSS.
+     * In short, this maximizes compatibility for gitching about anything, but has to rearrange the DOM for that purpose.
+     * 
+     * In some cases, it is better to handle this logic of two containers elsewhere than in PowerGlitch.
+     * For that, this flag should be false, which will make PowerGlitch.giltch(..) assume:
+     *  - That the first argument to glitch(..) is the layer container itself
+     *  - That the first child of the layer container is the element to glitch
+     * And will:
+     *  - Clone the element to glitch the required amount of times, and add the clones at the same level than the element to glitch in the layer container
+     */
+    createContainers: boolean,
+
+    /**
+     * While you can control the glitch with the startGlitch/stopGlitch methods,
+     * You can also set a default behavior for playing the glitch.
      */
     playMode: PlayModes,
 
@@ -136,21 +155,12 @@ export type LayerDefinition = {
 };
 
 /**
- * A rectangle in %, values from 0 to 100.
- */
-type Rectangle = {
-    top: number,
-    left: number,
-    height: number,
-    width: number,
-};
-
-/**
  * Get best-looking default options for most elements for a given playMode.
  */
 const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions => {
     return {
         playMode,
+        createContainers: true,
         hideOverflow: false,
         timing: playMode === 'always' ? { duration: 2 * 1000, iterations: Infinity } : { duration: 250, iterations: 1 },
         glitchTimeSpan: playMode === 'always' ? { start: 0.5, end: 0.7 } : { start: 0, end: 1, },
@@ -203,14 +213,13 @@ const getGlitchRandom = (options: PowerGlitchOptions, stepPct: number) => {
 };
 
 /**
- * Get a random rectangle values in % to glitch. Percent values are between 0 and 100.
+ * Get a random rectangle values in % to glitch. Percent values are between 0 and 100. Returns the rectangle as a CSS polygon.
  * @param minHeight Minimum height of the rectangle in percent, between 0 and 1.
  * @param maxHeight Maximum height of the rectangle in percent, between 0 and 1.
  * @param minWidth Minimum width of the rectangle in percent, between 0 and 1.
  * @param maxWidth Maximum width of the rectangle in percent, between 0 and 1.
  */
-const getRandomRectangle = ({ minHeight, maxHeight, minWidth, maxWidth }: { minHeight: number, maxHeight: number, minWidth: number, maxWidth: number }): Rectangle => {
-    // Choose a random size for this rectangle
+const getRandomRectanglePolygonCss = ({ minHeight, maxHeight, minWidth, maxWidth }: { minHeight: number, maxHeight: number, minWidth: number, maxWidth: number }) => {    // Choose a random size for this rectangle
     const height = Math.floor(Math.random() * ((maxHeight - minHeight) * 100 + 1)) + minHeight * 100;
     const width = Math.floor(Math.random() * ((maxWidth - minWidth) * 100 + 1)) + minWidth * 100;
 
@@ -218,15 +227,6 @@ const getRandomRectangle = ({ minHeight, maxHeight, minWidth, maxWidth }: { minH
     const top = Math.floor(Math.random() * (100 - height));
     const left = Math.floor(Math.random() * (100 - width));
 
-    // Get value as a CSS polygon
-    return { top, left, height, width };
-};
-
-/**
- * Transform a rectangle into a CSS polygon.
- * @param rectangle Rectangle to transform.
- */
-const getRectanglePolygonCss = ({ top, left, height, width }: Rectangle) => {
     const topRight = `${left + width}% ${top}%`;
     const bottomRight = `${left + width}% ${top + height}%`;
     const bottomLeft = `${left}% ${top + height}%`;
@@ -250,12 +250,11 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
             });
             continue;
         }
-        const rectangle = getRandomRectangle({ minHeight: options.slice.minHeight, maxHeight: options.slice.maxHeight, minWidth: 1, maxWidth: 1 });
         const translateX = getGlitchRandom(options, index / stepCount) * 30;
         const styles: {[cssPropertyName: string]: string} = {
             opacity: '1',
             transform: `translate3d(${translateX}%,0,0)`,
-            clipPath: getRectanglePolygonCss(rectangle),
+            clipPath: getRandomRectanglePolygonCss({ minHeight: options.slice.minHeight, maxHeight: options.slice.maxHeight, minWidth: 1, maxWidth: 1 }),
         };
         if (options.slice.hueRotate) {
             styles.filter = `hue-rotate(${Math.floor(getGlitchRandom(options, index / stepCount) * 360)}deg)`;
@@ -289,9 +288,9 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
     for (let index = 0; index < stepCount; ++ index) {
         const translateX = getGlitchRandom(options, index / stepCount) * options.shake.amplitudeX * 100;
         const translateY = getGlitchRandom(options, index / stepCount) * options.shake.amplitudeY * 100;
-        const styles: {[cssPropertyName: string]: string} = {};
-        styles.transform = `translate3d(${translateX}%,${translateY}%,0)`;
-        steps.push(styles);
+        steps.push({
+            transform: `translate3d(${translateX}%,${translateY}%,0)`,
+        });
     }
     return {
         steps,
@@ -305,19 +304,10 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
 /**
  * Generate the layers that deterministically define a glitch animation for the specified options.
  */
-const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => {
-    const layers = [
-        generateBaseLayer(options),
-    ];
-
-    if (options.slice) {
-        for (let i = 0; i < options.slice.count; ++ i) {
-            layers.push(generateGlitchSliceLayer(options));
-        }
-    }
-
-    return layers;
-};
+const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => ([
+    generateBaseLayer(options),
+    ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
+]);
 
 /**
 * Performs a deep merge of objects and returns new object. Does not modify
@@ -353,42 +343,75 @@ const mergeDeep = (...objects: readonly any[]): any => {
 };
 
 /**
+ * Prepare the DOM to set up the glitch effect.
+ * @remarks
+ * Depending on the element state:
+ *  - Whether it was glitched before or not,
+ *  - Whether current element display attributes
+ *  - Whether options.createContainers is true/false
+ * The top-level container and layer containers might be different objects and might need to be created.
+ * @param element 
+ * @param options 
+ * @returns 
+ */
+const prepareGlitchElement = (element: HTMLElement, options: PowerGlitchOptions): { glitched: HTMLElement, container: HTMLDivElement, layersContainer: HTMLDivElement } => {
+    // If not creating the containers
+    if (! options.createContainers) {
+        return {
+            container: element as HTMLDivElement,
+            layersContainer: element as HTMLDivElement,
+            glitched: element.firstElementChild as HTMLElement,
+        };
+    }
+
+    // If first glitch
+    if (! element.dataset.glitched) {
+        // Setup the layer container using grid to stack elements
+        const layersContainer = document.createElement('div');
+        // If current element is an inline element
+        const container = document.createElement('div');
+        if (getComputedStyle(element).getPropertyValue('display').match(/^inline/)) {
+            container.style.display = 'inline-block';
+        }
+        // Add the layers container to the global container
+        container.appendChild(layersContainer);
+        // Replace element with the new container
+        element.parentElement?.insertBefore(container, element);
+        layersContainer.prepend(element);
+        return {
+            container,
+            layersContainer,
+            glitched: element,
+        };
+    }
+
+    // Not first glitch, with createContainers=true
+    const layersContainer = element.parentElement as HTMLDivElement;
+    const container = element.parentElement?.parentElement as HTMLDivElement;
+    // Remove all glitch layers but keep the first one (which is the original element)
+    while (layersContainer.children.length > 1) {
+        layersContainer.removeChild(layersContainer.children[1]);
+    }
+    // Cancel the animation on the first layer
+    (layersContainer.firstElementChild as HTMLDivElement).getAnimations().forEach(animation => animation.cancel());
+    return {
+        container,
+        layersContainer,
+        glitched: element,
+    };
+};
+
+/**
  * Given a set of computed layers and user options, glitch a given element
  * @param element 
  * @param layers 
  * @param options 
  */
 const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options: PowerGlitchOptions): { container: HTMLDivElement, startGlitch: () => void, stopGlitch: () => void } => {
-    const alreadyGlitched = !! element.dataset.glitched;
-
-    /**
-     * Depending on the element state (whether it was glitched before or not, current element display attributes)
-     */
-    let container: HTMLDivElement;
-    let layersContainer: HTMLDivElement;
-
-    // If new glitch
-    if (! alreadyGlitched) {
-        // Setup the layer container using grid to stack elements
-        layersContainer = document.createElement('div');
-        layersContainer.style.display = 'grid';
-        // If current element is an inline element
-        container = document.createElement('div');
-        if (getComputedStyle(element).getPropertyValue('display').match(/^inline/)) {
-            container.style.display = 'inline-block';
-        }
-        // Add the layers container to the global container
-        container.appendChild(layersContainer);
-    } else {
-        layersContainer = element.parentElement as HTMLDivElement;
-        container = element.parentElement?.parentElement as HTMLDivElement;
-        // Remove all glitch layers but keep the first one (which is the original element)
-        while (layersContainer.children.length > 1) {
-            layersContainer.removeChild(layersContainer.children[1]);
-        }
-        // Cancel the animation on the first layer
-        (layersContainer.firstElementChild as HTMLDivElement).getAnimations().forEach(animation => animation.cancel());
-    }
+    const { glitched, container, layersContainer } = prepareGlitchElement(element, options);
+    
+    // Force grid display on the layer container
+    layersContainer.style.display = 'grid';
     
     // Overflow
     if (options.hideOverflow) {
@@ -397,20 +420,14 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
 
     // If setting HTML manually
     if (options.html) {
-        element.innerHTML = options.html;
-    }
-
-    // Replace element with the new container
-    if (! alreadyGlitched) {
-        element.parentElement?.insertBefore(container, element);
-        layersContainer.prepend(element);
+        glitched.innerHTML = options.html;
     }
     
     // Stack original element too (it is used as the base shaking layer)
-    element.style.gridArea = '1/1/-1/-1';
+    glitched.style.gridArea = '1/1/-1/-1';
 
     // Base layer
-    const baseLayer = element.cloneNode(true) as HTMLElement;
+    const baseLayer = glitched.cloneNode(true) as HTMLElement;
     // Stack this layer
     baseLayer.style.gridArea = '1/1/-1/-1';
     baseLayer.style.userSelect = 'none';
@@ -442,34 +459,31 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
     };
 
     // Depending on the selected play mode, orchestrate when to start/stop the glitch
+    container.onmouseenter = null;
+    container.onmouseleave = null;
+    container.onclick = null;
     switch (options.playMode) {
         case 'always':
             startGlitch();
-            container.onmouseenter = null;
-            container.onmouseleave = null;
             break;
         case 'hover':
             container.onmouseenter = startGlitch;
             container.onmouseleave = stopGlitch;
-            container.onclick = null;
             break;
         case 'click':
-            container.onmouseenter = null;
-            container.onmouseleave = null;
             container.onclick = () => { stopGlitch(); startGlitch(); };
-            break;
-        case 'manual':
-            container.onmouseenter = null;
-            container.onmouseleave = null;
-            container.onclick = null;
             break;
     }
 
+    // Mark the glitched element as glitched for next round
     element.dataset.glitched = '1';
 
     return { container, startGlitch, stopGlitch };
 };
 
+/**
+ * Utility class to have optional properties on a type recursively
+ */
 export type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>;
 };

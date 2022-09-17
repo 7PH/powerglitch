@@ -61,6 +61,10 @@ describe('Given default options', () => {
     test('the default play mode should be \'always\'', async () => {
         expect(PowerGlitch.getDefaultOptions().playMode).toBe('always');
     });
+    
+    test('the default createContainer should be \'true\'', async () => {
+        expect(PowerGlitch.getDefaultOptions().createContainers).toBe(true);
+    });
 });
 
 describe('Given one or multiple element(s) to glitch', () => {
@@ -246,5 +250,27 @@ describe('Given playMode option', () => {
         // When stopGlitch is called, the animation should stop
         stopGlitch();
         ensureAllLayersPlaying(containers[0], false);
+    });
+});
+
+describe('Given createContainers option', () => {
+    /**
+     * createContainers set to false
+     */
+    testAllElementTypes('does not modify DOM layout when createContainers is false', async elementType => {
+        init(`
+        <div class="container">
+            ${ELEMENTS[elementType]}
+        </div>
+        `);
+        PowerGlitch.glitch('.container', {
+            ...baseOptions,
+            createContainers: false,
+            slice: { count: 3 },
+        });
+
+        // If createContainers is true, DOM layout would be '.container > div > div > .glitch*4'
+        // If false, it should be '.container > .glitch*4'
+        expect(document.querySelectorAll('.container > .glitch').length).toBe(4);
     });
 });
