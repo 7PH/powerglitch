@@ -64,7 +64,8 @@ Documentation
 - Check out the [api documentation](https://7ph.github.io/powerglitch/api-docs/variables/PowerGlitch.html) for reference.
 
 Integrations
-- Vue plugin [vue-powerglitch](https://github.com/7PH/vue-powerglitch)
+- React: [react-powerglitch](https://github.com/7PH/react-powerglitch)
+- Vue: [vue-powerglitch](https://github.com/7PH/vue-powerglitch)
 
 ## Contributing
 
