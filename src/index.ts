@@ -287,11 +287,7 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
  * @param options 
  */
 const generateGlitchPulseLayer = (options: PowerGlitchOptions) => {
-    if (! options.pulse) {
-        return { steps: [], timing: {} };
-    }
-
-    return {
+    return ! options.pulse ? null : {
         steps: [
             { transform: 'scale(1)', opacity: '1', },
             { transform: `scale(${options.pulse.scale})`, opacity: '0', },
@@ -339,12 +335,12 @@ const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => (
         generateBaseLayer(options),
         ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
         generateGlitchPulseLayer(options),
-    ].filter(layer => layer.steps.length > 0)
+    ].filter(entry => entry !== null) as LayerDefinition[]
 );
 
 /**
 * Performs a deep merge of objects and returns new object. Does not modify
-* objects (immutable) and merges arrays via concatenation.
+* objects (immutable) and will ignore arrays.
 * @param objects - Objects to merge
 * @returns New object with merged key/values
 */

@@ -1,6 +1,6 @@
 {
     "name": "powerglitch",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "main": "./lib/src/index.js",
     "types": "./lib/src/index.d.ts",
     "scripts": {
@@ -13,7 +13,7 @@
         "size": "size-limit",
         "lint": "eslint src/**/*.ts docs-src/**/*.vue",
         "lint-fix": "eslint --fix src/**/*.ts docs-src/**/*.vue",
-        "test": "npm run lint && npm run size && jest"
+        "test": "npm run lint && jest"
     },
     "files": [
         "/lib/src",
@@ -56,7 +56,7 @@
     },
     "size-limit": [
         {
-            "limit": "2 kB",
+            "limit": "2.1 kB",
             "path": "dist/powerglitch.min.js"
         }
     ]
