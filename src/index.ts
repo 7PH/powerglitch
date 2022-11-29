@@ -283,15 +283,12 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
 };
 
 /**
- * Generate a pulse layer
+ * Generate a pulse layer, a single transparent and growing layer.
  * @param options 
  */
 const generateGlitchPulseLayer = (options: PowerGlitchOptions) => {
     if (! options.pulse) {
-        return {
-            steps: [],
-            timing: {},
-        };
+        return { steps: [], timing: {} };
     }
 
     return {
@@ -313,10 +310,7 @@ const generateGlitchPulseLayer = (options: PowerGlitchOptions) => {
  */
 const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
     if (! options.shake) {
-        return {
-            steps: [],
-            timing: {},
-        };
+        return { steps: [], timing: {} };
     }
 
     const stepCount = Math.floor(options.shake.velocity * options.timing.duration / 1000) + 1;
@@ -340,11 +334,13 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
 /**
  * Generate the layers that deterministically define a glitch animation for the specified options.
  */
-const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => ([
-    generateBaseLayer(options),
-    ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
-    generateGlitchPulseLayer(options),
-]);
+const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => (
+    [
+        generateBaseLayer(options),
+        ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
+        generateGlitchPulseLayer(options),
+    ].filter(layer => layer.steps.length > 0)
+);
 
 /**
 * Performs a deep merge of objects and returns new object. Does not modify
@@ -359,19 +355,10 @@ const mergeDeep = (...objects: readonly any[]): any => {
     return objects.reduce((prev, obj) => {
         Object.keys(obj)
             .forEach(key => {
-                const pVal = prev[key];
-                const oVal = obj[key];
-
-                if (Array.isArray(pVal) && Array.isArray(oVal)) {
-                    prev[key] = pVal.concat(...oVal);
-                    return;
-                }
-                if (isObject(pVal) && isObject(oVal)) {
-                    prev[key] = mergeDeep(pVal, oVal);
-                    return;
-                }
-                if (oVal !== undefined) {
-                    prev[key] = oVal;
+                if (isObject(prev[key]) && isObject(obj[key])) {
+                    prev[key] = mergeDeep(prev[key], obj[key]);
+                } else if (obj[key] !== undefined) {
+                    prev[key] = obj[key];
                 }
             });
 
