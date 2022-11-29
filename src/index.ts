@@ -137,6 +137,16 @@ export type PowerGlitchOptions = {
          */
         hueRotate: boolean,
     },
+
+    /**
+     * Pulse layer adds a pulsing effect to the glitch.
+     */
+    pulse: false | {
+        /**
+         * Max scale
+         */
+        scale: number,
+    },
 };
 
 /**
@@ -182,6 +192,7 @@ const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions =
             maxHeight: 0.15,
             hueRotate: true,
         },
+        pulse: false,
     };
 };
 
@@ -272,6 +283,31 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
 };
 
 /**
+ * Generate a pulse layer
+ * @param options 
+ */
+const generateGlitchPulseLayer = (options: PowerGlitchOptions) => {
+    if (! options.pulse) {
+        return {
+            steps: [],
+            timing: {},
+        };
+    }
+
+    return {
+        steps: [
+            { transform: 'scale(1)', opacity: '1', },
+            { transform: `scale(${options.pulse.scale})`, opacity: '0', },
+        ],
+        timing: {
+            ...options.timing,
+            delay: (options.glitchTimeSpan ? options.glitchTimeSpan.start : 0) * options.timing.duration,
+            easing: 'ease-in-out',
+        },
+    };
+};
+
+/**
  * Generate the base layer, which may or may not shake depending on the options.
  * @param options
  */
@@ -307,6 +343,7 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
 const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => ([
     generateBaseLayer(options),
     ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
+    generateGlitchPulseLayer(options),
 ]);
 
 /**
