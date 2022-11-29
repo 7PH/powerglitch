@@ -206,5 +206,24 @@ const appStore = useAppStore();
                 :title="'Hue rotate'"
             />
         </template>
+
+        <div class="font-bold mt-6 mb-2 pl-2">
+            Pulse
+        </div>
+        <ToggleGroupOption
+            v-model="appStore.powerGlitchOptions.pulse"
+            :title="'Enabled'"
+            :getDefaultValue="v => v ? { scale: 2 } : false"
+        />
+        <template v-if="appStore.powerGlitchOptions.pulse">
+            <NumberOption
+                v-model="appStore.powerGlitchOptions.pulse.scale"
+                class="mt-1"
+                :title="'Scale'"
+                :min="1.1"
+                :max="6"
+                :step="0.1"
+            />
+        </template>
     </div>
 </template>

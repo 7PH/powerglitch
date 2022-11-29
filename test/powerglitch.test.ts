@@ -169,6 +169,53 @@ describe('Given slice option', () => {
     });
 });
 
+describe('Given pulse option', () => {
+    /**
+     * Test the default glitch effect and the DOM manipulations that result from the glitch
+     */
+    testAllElementTypes('creates the pulse layer', async elementType => {
+        const { element } = init(ELEMENTS[elementType]);
+        const { containers } = PowerGlitch.glitch(element, {
+            ...baseOptions,
+            slice: {
+                count: 0,
+            },
+            pulse: {
+                scale: 2,
+            },
+        });
+
+        // One element only should be glitched
+        expect(containers.length).toBe(1);
+
+        // Exactly one pulse layer (basis layer + pulse layer)
+        expect(containers[0].firstElementChild?.children.length).toBe(2);
+    });
+    
+    /**
+     * Test the default glitch effect and the DOM manipulations that result from the glitch
+     */
+    testAllElementTypes('creates the pulse layer without glitch time span', async elementType => {
+        const { element } = init(ELEMENTS[elementType]);
+        const { containers } = PowerGlitch.glitch(element, {
+            ...baseOptions,
+            glitchTimeSpan: false,
+            slice: {
+                count: 0,
+            },
+            pulse: {
+                scale: 2,
+            },
+        });
+
+        // One element only should be glitched
+        expect(containers.length).toBe(1);
+
+        // Exactly one pulse layer (basis layer + pulse layer)
+        expect(containers[0].firstElementChild?.children.length).toBe(2);
+    });
+});
+
 describe('Given hideOverflow option', () => {
     /**
      * Test that the hide overflow option works

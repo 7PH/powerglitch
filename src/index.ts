@@ -137,6 +137,16 @@ export type PowerGlitchOptions = {
          */
         hueRotate: boolean,
     },
+
+    /**
+     * Pulse layer adds a pulsing effect to the glitch.
+     */
+    pulse: false | {
+        /**
+         * Max scale
+         */
+        scale: number,
+    },
 };
 
 /**
@@ -182,6 +192,7 @@ const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions =
             maxHeight: 0.15,
             hueRotate: true,
         },
+        pulse: false,
     };
 };
 
@@ -272,15 +283,30 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
 };
 
 /**
+ * Generate a pulse layer, a single transparent and growing layer.
+ * @param options 
+ */
+const generateGlitchPulseLayer = (options: PowerGlitchOptions) => {
+    return ! options.pulse ? null : {
+        steps: [
+            { transform: 'scale(1)', opacity: '1', },
+            { transform: `scale(${options.pulse.scale})`, opacity: '0', },
+        ],
+        timing: {
+            ...options.timing,
+            delay: (options.glitchTimeSpan ? options.glitchTimeSpan.start : 0) * options.timing.duration,
+            easing: 'ease-in-out',
+        },
+    };
+};
+
+/**
  * Generate the base layer, which may or may not shake depending on the options.
  * @param options
  */
 const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
     if (! options.shake) {
-        return {
-            steps: [],
-            timing: {},
-        };
+        return { steps: [], timing: {} };
     }
 
     const stepCount = Math.floor(options.shake.velocity * options.timing.duration / 1000) + 1;
@@ -304,14 +330,17 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
 /**
  * Generate the layers that deterministically define a glitch animation for the specified options.
  */
-const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => ([
-    generateBaseLayer(options),
-    ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
-]);
+const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => (
+    [
+        generateBaseLayer(options),
+        ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
+        generateGlitchPulseLayer(options),
+    ].filter(entry => entry !== null) as LayerDefinition[]
+);
 
 /**
 * Performs a deep merge of objects and returns new object. Does not modify
-* objects (immutable) and merges arrays via concatenation.
+* objects (immutable) and will ignore arrays.
 * @param objects - Objects to merge
 * @returns New object with merged key/values
 */
@@ -322,19 +351,10 @@ const mergeDeep = (...objects: readonly any[]): any => {
     return objects.reduce((prev, obj) => {
         Object.keys(obj)
             .forEach(key => {
-                const pVal = prev[key];
-                const oVal = obj[key];
-
-                if (Array.isArray(pVal) && Array.isArray(oVal)) {
-                    prev[key] = pVal.concat(...oVal);
-                    return;
-                }
-                if (isObject(pVal) && isObject(oVal)) {
-                    prev[key] = mergeDeep(pVal, oVal);
-                    return;
-                }
-                if (oVal !== undefined) {
-                    prev[key] = oVal;
+                if (isObject(prev[key]) && isObject(obj[key])) {
+                    prev[key] = mergeDeep(prev[key], obj[key]);
+                } else if (obj[key] !== undefined) {
+                    prev[key] = obj[key];
                 }
             });
 
