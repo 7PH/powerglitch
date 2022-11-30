@@ -516,7 +516,7 @@ export type GlitchPartialOptions = RecursivePartial<PowerGlitchOptions>;
 /**
  * Specifies what to glitch. Query selector, html element, list of html elements or NodeList.
  */
-export type GlitchableElement = string | HTMLElement | NodeList | Array<HTMLElement>;
+export type GlitchableElement = string | HTMLElement | NodeListOf<HTMLElement> | Array<HTMLElement>;
 
 /**
  * The result for glitching one or multiple elements.

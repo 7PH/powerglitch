@@ -103,7 +103,7 @@ describe('Given one or multiple element(s) to glitch', () => {
      */
     test('from querySelectorAll', async () => {
         init(Object.values(ELEMENTS).join(''));
-        const elements = document.querySelectorAll('.glitch');
+        const elements = document.querySelectorAll<HTMLElement>('.glitch');
         const { containers } = PowerGlitch.glitch(elements, { ...baseOptions });
         expect(containers.length).toBe(elements.length);
     });
