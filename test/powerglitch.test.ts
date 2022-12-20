@@ -170,7 +170,7 @@ describe('Given slice option', () => {
         expect(containers[0].firstElementChild?.children.length).toBe(11);
     });
 
-    test('use `none` transform property when not glitching', () => {
+    test('never use empty CSS transform value for steps without glitch', () => {
         // Generate layers
         const layers = PowerGlitch.generateLayers(mergeOptions(
             PowerGlitch.getDefaultOptions(baseOptions.playMode),
@@ -182,7 +182,6 @@ describe('Given slice option', () => {
         ));
 
         for (const layer of layers.slice(1)) {
-            expect(layer.steps)
             for (const step of layer.steps) {
                 expect(step.transform).toMatch(/./);
             }
