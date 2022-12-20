@@ -256,7 +256,7 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
         if (getGlitchFactor(options, index / stepCount) === 0) {
             steps.push({
                 opacity: '0',
-                transform: '',
+                transform: 'none',
                 clipPath: 'unset',
             });
             continue;
@@ -333,26 +333,26 @@ const generateBaseLayer = (options: PowerGlitchOptions): LayerDefinition => {
 const generateLayers = (options: PowerGlitchOptions): LayerDefinition[] => (
     [
         generateBaseLayer(options),
-        ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
         generateGlitchPulseLayer(options),
+        ...Array.from({ length: options.slice.count }).map(() => generateGlitchSliceLayer(options)),
     ].filter(entry => entry !== null) as LayerDefinition[]
 );
 
 /**
-* Performs a deep merge of objects and returns new object. Does not modify
+* Performs a deep merge of option objects and returns new object. Does not modify
 * objects (immutable) and will ignore arrays.
 * @param objects - Objects to merge
 * @returns New object with merged key/values
 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mergeDeep = (...objects: readonly any[]): any => {
+export const mergeOptions = (...objects: readonly any[]): any => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const isObject = (obj: any) => obj && typeof obj === 'object';
     return objects.reduce((prev, obj) => {
         Object.keys(obj)
             .forEach(key => {
                 if (isObject(prev[key]) && isObject(obj[key])) {
-                    prev[key] = mergeDeep(prev[key], obj[key]);
+                    prev[key] = mergeOptions(prev[key], obj[key]);
                 } else if (obj[key] !== undefined) {
                     prev[key] = obj[key];
                 }
@@ -546,7 +546,7 @@ export type GlitchResult = {
  */
 const glitch = (elOrSelector: GlitchableElement = '.powerglitch', userOptions: GlitchPartialOptions = {}): GlitchResult => {
     // Fix options with defaults
-    const options: PowerGlitchOptions = mergeDeep(getDefaultOptions(userOptions.playMode), userOptions);
+    const options: PowerGlitchOptions = mergeOptions(getDefaultOptions(userOptions.playMode), userOptions);
 
     // Find elements to glitch
     let elements: HTMLElement[] = [];
