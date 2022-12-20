@@ -1,5 +1,6 @@
 import { mockAnimationsApi } from 'jsdom-testing-mocks';
-import { PowerGlitch } from '../src/index';
+import { PowerGlitch, PowerGlitchOptions, RecursivePartial } from '../src/index';
+import { mergeOptions } from '../src/index';
 
 
 const ELEMENTS: {[elementType: string]: string} = {
@@ -17,7 +18,8 @@ const init = (html: string) => {
 };
 
 // We have to specify a easing different than steps, becasue steps is not supported by the Web Animation API mock
-const baseOptions = {
+const baseOptions: RecursivePartial<PowerGlitchOptions> = {
+    playMode: 'always',
     timing: {
         easing: 'ease-in-out',
     },
@@ -166,6 +168,25 @@ describe('Given slice option', () => {
 
         // When creating 10 slices, the number of created layers should be 1 + 10 (the basis layer plus the slice layers)
         expect(containers[0].firstElementChild?.children.length).toBe(11);
+    });
+
+    test('use `none` transform property when not glitching', () => {
+        // Generate layers
+        const layers = PowerGlitch.generateLayers(mergeOptions(
+            PowerGlitch.getDefaultOptions(baseOptions.playMode),
+            {
+                ...baseOptions,
+                shake: false,
+                pulse: false,
+            },
+        ));
+
+        for (const layer of layers.slice(1)) {
+            expect(layer.steps)
+            for (const step of layer.steps) {
+                expect(step.transform).toMatch(/./);
+            }
+        }
     });
 });
 
