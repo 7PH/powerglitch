@@ -1,6 +1,7 @@
 {
     "name": "powerglitch",
     "version": "2.3.2",
+    "type": "module",
     "main": "./lib/src/index.js",
     "types": "./lib/src/index.d.ts",
     "scripts": {
