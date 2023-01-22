@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import defaultImage from '@/assets/default.png';
+import defaultImage from '/default.png';
 import { PowerGlitch } from '../../../src/index.ts';
 
 
