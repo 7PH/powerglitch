@@ -1,35 +1,35 @@
 env:
-    browser: true
-    es2021: true
+  browser: true
+  es2021: true
 extends:
-    - eslint:recommended
-    - plugin:@typescript-eslint/recommended
-    - plugin:vue/vue3-recommended
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
+  - plugin:vue/vue3-recommended
 parserOptions:
-    ecmaVersion: latest
-    parser: '@typescript-eslint/parser'
-    sourceType: module
+  ecmaVersion: latest
+  parser: "@typescript-eslint/parser"
+  sourceType: module
 plugins:
-    - vue
-    - '@typescript-eslint'
+  - vue
+  - "@typescript-eslint"
 rules:
-    indent:
-        - error
-        - 4
-        - SwitchCase: 1
-    linebreak-style:
-        - error
-        - unix
-    quotes:
-        - error
-        - single
-    semi:
-        - error
-        - always
-    vue/html-indent:
-        - warn
-        - 4
-    vue/attribute-hyphenation:
-        - off
-    vue/v-on-event-hyphenation:
-        - off
+  indent:
+    - error
+    - 4
+    - SwitchCase: 1
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - single
+  semi:
+    - error
+    - always
+  vue/html-indent:
+    - warn
+    - 4
+  vue/attribute-hyphenation:
+    - off
+  vue/v-on-event-hyphenation:
+    - off

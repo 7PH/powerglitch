@@ -2,7 +2,6 @@
 import { ref, watch, onMounted } from 'vue';
 import { useAppStore } from '@/stores/app';
 import { PowerGlitch } from '../../../src/index';
-import defaultImage from '@/assets/default.png';
 
 const appStore = useAppStore();
 
