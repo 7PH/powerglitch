@@ -122,17 +122,36 @@ describe('Given one or multiple element(s) to glitch', () => {
 });
 
 describe('Given glitching more than once the same element', () => {
-    /**
-     * Glitching twice an element should reset its animation
-     */
-    testAllElementTypes('overrides glitch on second call', async elementType => {
-        const { element } = init(ELEMENTS[elementType]);
-        const { containers: containers1 } = PowerGlitch.glitch(element, { ...baseOptions, slice: { count: 10 } });
-        expect(containers1.length).toBe(1);
-        expect(containers1[0].firstElementChild?.children.length).toBe(11);
-        const { containers: containers2 } = PowerGlitch.glitch(element, { ...baseOptions, slice: { count: 20 } });
-        expect(containers2.length).toBe(1);
-        expect(containers2[0].firstElementChild?.children.length).toBe(21);
+    describe('overrides options on successive call', () => {
+        testAllElementTypes('using element reference', async elementType => {
+            const { element } = init(ELEMENTS[elementType]);
+            const { containers: containers1 } = PowerGlitch.glitch(element, { ...baseOptions, slice: { count: 10 } });
+            expect(containers1.length).toBe(1);
+            expect(containers1[0].firstElementChild?.children.length).toBe(11);
+
+            const { containers: containers2 } = PowerGlitch.glitch(element, { ...baseOptions, slice: { count: 20 } });
+            expect(containers2.length).toBe(1);
+            expect(containers2[0].firstElementChild?.children.length).toBe(21);
+            
+            const { containers: containers3 } = PowerGlitch.glitch(element, { ...baseOptions, slice: { count: 15 } });
+            expect(containers3.length).toBe(1);
+            expect(containers3[0].firstElementChild?.children.length).toBe(16);
+        });
+
+        testAllElementTypes('using query selector', async elementType => {
+            init(ELEMENTS[elementType]);
+            const { containers: containers1 } = PowerGlitch.glitch('.glitch', { ...baseOptions, slice: { count: 10 } });
+            expect(containers1.length).toBe(1);
+            expect(containers1[0].firstElementChild?.children.length).toBe(11);
+
+            const { containers: containers2 } = PowerGlitch.glitch('.glitch', { ...baseOptions, slice: { count: 20 } });
+            expect(containers2.length).toBe(1);
+            expect(containers2[0].firstElementChild?.children.length).toBe(21);
+
+            const { containers: containers3 } = PowerGlitch.glitch('.glitch', { ...baseOptions, slice: { count: 15 } });
+            expect(containers3.length).toBe(1);
+            expect(containers3[0].firstElementChild?.children.length).toBe(16);
+        });
     });
 });
 
