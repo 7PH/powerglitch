@@ -448,6 +448,7 @@ const glitchElement = (element: HTMLElement, layers: LayerDefinition[], options:
 
     // Base layer
     const baseLayer = glitched.cloneNode(true) as HTMLElement;
+    baseLayer.dataset.islayer = 'true';
     // Stack this layer
     baseLayer.style.gridArea = '1/1/-1/-1';
     baseLayer.style.userSelect = 'none';
@@ -564,7 +565,16 @@ const glitch = (elOrSelector: GlitchableElement = '.powerglitch', userOptions: G
     const layers = generateLayers(options);
 
     // Animate each div element
-    const entries = elements.map(element => glitchElement(element, layers, options));
+    const entries = elements
+        /**
+         * When calling glitch(..) multiple times on the same element using query selector, glitch layers will also match the selector.
+         * Only the root-layer (base element) should be glitched, so we ensure we filter out non-root glitch layers.
+         */
+        .filter(element => !element.dataset.islayer)
+        // Each element is glitched using the same layer definition.
+        .map((element) =>
+            glitchElement(element, layers, options)
+        );
 
     // Return list of containers and glitch control functions
     return {
