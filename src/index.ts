@@ -13,6 +13,11 @@ export type PlayModes = 'always' | 'hover' | 'click' | 'manual';
  */
 export type PowerGlitchOptions = {
     /**
+     * Whether to avoid running the glitch effect on crawlers for SEO optimization.
+     */
+    optimizeSeo: boolean,
+
+    /**
      * Html to glitch. If not provided, will use the elements themselves. If provided, all elements should have an `innerHTML` property.
      */
     html?: string,
@@ -170,6 +175,7 @@ export type LayerDefinition = {
 const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions => {
     return {
         playMode,
+        optimizeSeo: true,
         createContainers: true,
         hideOverflow: false,
         timing: playMode === 'always' ? { duration: 2 * 1000, iterations: Infinity } : { duration: 250, iterations: 1 },
@@ -545,9 +551,14 @@ export type GlitchResult = {
  * @param elOrSelector What to glitch. Can be a query selector, a list of HTMLElement, an HTMLElement or a NodeList.
  * @param userOptions Optional glitch customization options.
  */
-const glitch = (elOrSelector: GlitchableElement = '.powerglitch', userOptions: GlitchPartialOptions = {}): GlitchResult => {
+const glitch = (elOrSelector: GlitchableElement = '.powerglitch', userOptions: GlitchPartialOptions = {}): GlitchResult | null => {
     // Fix options with defaults
     const options: PowerGlitchOptions = mergeOptions(getDefaultOptions(userOptions.playMode), userOptions);
+
+    // Do NOT glitch if SEO optimization is enabled and the user agent is a bot
+    if (options.optimizeSeo && navigator.userAgent.match(/bot|google|baidu|bing|msn|teoma|slurp|yandex|facebookexternalhit|facebot/i)) {
+        return null;
+    }
 
     // Find elements to glitch
     let elements: HTMLElement[] = [];
