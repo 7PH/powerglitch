@@ -59,6 +59,61 @@ try {
     console.warn('Unable to mock Web Animation API');
 }
 
+describe('Given optimizeSeo option', () => {
+    const botUserAgents = [
+        'Googlebot/2.1 (+http://www.google.com/bot.html)',
+        'Bingbot/2.0 (+http://www.bing.com/bingbot.htm)',
+        'DuckDuckBot/1.1 (+https://duckduckgo.com/duckduckbot/)',
+        'Yahoo! Slurp (+http://help.yahoo.com/help/us/ysearch/slurp)',
+        'Baiduspider/2.0 (+http://www.baidu.com/search/spider.html)',
+    ];
+    const nonBotUserAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/16.16299 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/58.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36',
+    ];
+
+    let userAgentSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+        userAgentSpy = jest.spyOn(window.navigator, 'userAgent', 'get');
+    });
+
+    afterEach(() => {
+        userAgentSpy.mockRestore();
+    });
+
+    test.each(botUserAgents)('does not glitch when optimizeSeo is true for bot "%s"', async (userAgent) => {
+        init(ELEMENTS.paragraph);
+        userAgentSpy.mockReturnValue(userAgent);
+        const { containers } = PowerGlitch.glitch('.glitch', {
+            ...baseOptions,
+        });
+        expect(containers.length).toBe(0);
+    });
+
+    test.each(nonBotUserAgents)('glitches when optimizeSeo is true for non-bot "%s"', async (userAgent) => {
+        init(ELEMENTS.paragraph);
+        userAgentSpy.mockReturnValue(userAgent);
+        const { containers } = PowerGlitch.glitch('.glitch', {
+            ...baseOptions,
+            optimizeSeo: true,
+        });
+        expect(containers.length).toBe(1);
+    });
+
+    test.each(botUserAgents)('glitches when optimizeSeo is false for bot "%s"', async (userAgent) => {
+        init(ELEMENTS.paragraph);
+        userAgentSpy.mockReturnValue(userAgent);
+        const { containers } = PowerGlitch.glitch('.glitch', {
+            ...baseOptions,
+            optimizeSeo: false,
+        });
+        expect(containers.length).toBe(1);
+    });
+});
+
 describe('Given default options', () => {
     test('the default play mode should be \'always\'', async () => {
         expect(PowerGlitch.getDefaultOptions().playMode).toBe('always');
