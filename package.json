@@ -6,8 +6,16 @@
   "main": "./lib/index.cjs",
   "types": "./build/src/index.d.ts",
   "exports": {
-    "import": "./lib/index.esm.js",
-    "require": "./lib/index.cjs"
+    ".": {
+      "import": {
+        "types": "./build/src/index.d.ts",
+        "default": "./lib/index.esm.js"
+      },
+      "require": {
+        "types": "./build/src/index.d.ts",
+        "default": "./lib/index.cjs"
+      }
+    }
   },
   "repository": {
     "type": "git",
