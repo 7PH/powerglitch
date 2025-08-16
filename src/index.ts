@@ -141,6 +141,11 @@ export type PowerGlitchOptions = {
          * Whether the hue should rotate for the given slice.
          */
         hueRotate: boolean,
+
+        /**
+         * Apply custom CSS filters to glitch layers. Setting this will automatically disable hueRotate.
+         */
+        cssFilters: string,
     },
 
     /**
@@ -191,12 +196,14 @@ const getDefaultOptions = (playMode: PlayModes = 'always'): PowerGlitchOptions =
             minHeight: 0.02,
             maxHeight: 0.15,
             hueRotate: true,
+            cssFilters: '',
         } : {
             count: 6,
             velocity: 15,
             minHeight: 0.02,
             maxHeight: 0.15,
             hueRotate: true,
+            cssFilters: '',
         },
         pulse: false,
     };
@@ -273,7 +280,10 @@ const generateGlitchSliceLayer = (options: PowerGlitchOptions) => {
             transform: `translate3d(${translateX}%,0,0)`,
             clipPath: getRandomRectanglePolygonCss({ minHeight: options.slice.minHeight, maxHeight: options.slice.maxHeight, minWidth: 1, maxWidth: 1 }),
         };
-        if (options.slice.hueRotate) {
+        
+        if (options.slice.cssFilters) {
+            styles.filter = options.slice.cssFilters;
+        } else if (options.slice.hueRotate) {
             styles.filter = `hue-rotate(${Math.floor(getGlitchRandom(options, index / stepCount) * 360)}deg)`;
         }
         steps.push(styles);

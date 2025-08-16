@@ -1,6 +1,5 @@
 import { mockAnimationsApi } from 'jsdom-testing-mocks';
-import { PowerGlitch, PowerGlitchOptions, RecursivePartial } from '../src/index';
-import { mergeOptions } from '../src/index';
+import { mergeOptions, PowerGlitch, PowerGlitchOptions, RecursivePartial } from '../src/index';
 
 
 const ELEMENTS: {[elementType: string]: string} = {
@@ -258,6 +257,28 @@ describe('Given slice option', () => {
         for (const layer of layers.slice(1)) {
             for (const step of layer.steps) {
                 expect(step.transform).toMatch(/./);
+            }
+        }
+    });
+
+    test('custom css filters should be applied and auto-disable hueRotate', ()  => {
+        // Generate layers
+        const layers = PowerGlitch.generateLayers(mergeOptions(
+            PowerGlitch.getDefaultOptions(baseOptions.playMode),
+            {
+                ...baseOptions,
+                slice: {
+                    hueRotate: true,
+                    cssFilters: 'blur(10px) brightness(0.8)',
+                }
+            },
+        ));
+
+        for (const layer of layers.slice(1)) {
+            // Some steps don't have the filter applied (when the element isn't glitching)
+            const filteredSteps = layer.steps.filter(step => step.filter !== undefined);
+            for (const step of filteredSteps) {
+                expect(step.filter).toBe('blur(10px) brightness(0.8)');
             }
         }
     });
