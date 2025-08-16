@@ -8,6 +8,10 @@ defineProps({
         type: String,
         required: true,
     },
+    placeholder: {
+        type: String,
+        default: '',
+    },
 });
 
 defineEmits(['update:modelValue']);
@@ -21,7 +25,7 @@ defineEmits(['update:modelValue']);
         <div class="col-span-8 flex gap-4 overflow-x-hidden">
             <input
                 class="w-full"
-                :placeholder="title"
+                :placeholder="placeholder ?? title"
                 :value="modelValue"
                 @input="$emit('update:modelValue', $event.target.value)"
             >

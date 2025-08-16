@@ -5,6 +5,7 @@ import { useAppStore } from '@/stores/app';
 import ToggleGroupOption from '@/components/ToggleGroupOption.vue';
 import SelectOption from '@/components/SelectOption.vue';
 import BooleanOption from '@/components/BooleanOption.vue';
+import StringOption from '@/components/StringOption.vue';
 import NumberOption from '@/components/NumberOption.vue';
 
 const appStore = useAppStore();
@@ -204,6 +205,18 @@ const appStore = useAppStore();
                 v-model="appStore.powerGlitchOptions.slice.hueRotate"
                 class="mt-1"
                 :title="'Hue rotate'"
+            />
+            <StringOption
+                :model-value="appStore.powerGlitchOptions.slice.cssFilters"
+                class="mt-1"
+                :title="'CSS filters'"
+                placeholder="CSS filters eg `blur(5px) brightness(0.8)`"
+                @update:model-value="v => {
+                    appStore.powerGlitchOptions.slice.cssFilters = v;
+                    if (v) {
+                        appStore.powerGlitchOptions.slice.hueRotate = false;
+                    }
+                }"
             />
         </template>
 

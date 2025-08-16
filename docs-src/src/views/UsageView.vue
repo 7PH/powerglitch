@@ -185,7 +185,7 @@ PowerGlitch.glitch(
             velocity: 10,
             minHeight: 0.02,
             maxHeight: 0.40,
-            hueRotate: true,
+            cssFilters: 'blur(5px) brightness(0.8)',
         },
     }
 )
