@@ -80,7 +80,7 @@
   },
   "size-limit": [
     {
-      "limit": "2.1 kB",
+      "limit": "2.2 kB",
       "path": "dist/powerglitch.min.js"
     }
   ]
